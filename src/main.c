@@ -41,7 +41,7 @@ int main(void)
 	while(1)
 	{
 		heating_control();
-		CAN_control();//对上位机发送接收
+		CAN_control();//锟斤拷锟斤拷位锟斤拷锟斤拷锟酵斤拷锟斤拷
 		Judge_WorkVoltage_loop();
 		flash_manage_loop();
 	}

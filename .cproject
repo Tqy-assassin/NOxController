@@ -434,10 +434,10 @@
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.1336660168;com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.1336660168.;com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.1804346073;cdt.managedbuild.tool.gnu.c.compiler.input.1506750881">
+		<scannerConfigBuildInfo instanceId="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1340553532;com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1340553532.;com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.963301517;cdt.managedbuild.tool.gnu.c.compiler.input.1682760199">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1884817740;com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1884817740.;com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.1935680868;cdt.managedbuild.tool.gnu.c.compiler.input.1072656066">
+		<scannerConfigBuildInfo instanceId="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.827050809;com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.827050809.;com.freescale.s32ds.cross.gnu.arm.cortexm.tool.c.compiler.1970867413;cdt.managedbuild.tool.gnu.c.compiler.input.2044912909">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>

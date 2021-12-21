@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "derivative.h": "c",
+        "asic_controller.h": "c",
+        "vendor.h": "c",
+        "uart.h": "c",
+        "gwm_vendor.h": "c",
+        "string.h": "c",
+        "cstddef": "c",
+        "type_traits": "c"
+    }
+}

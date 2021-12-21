@@ -14,12 +14,13 @@
 #define WORKVOLAGE12Vor24V	0		//12V : 1 | 24V : 0
 #endif
 
-#define ONSEMI_SCHEME 1    //·ÂNTK: 0 | Ô­°æ :1
+#define ONSEMI_SCHEME 0    //·ÂNTK: 0 | Ô­°æ :1
 #define NTK_KIND	1//250
 #define BENZ_KIND	2//500
+#define GWM_KIND	3
 #define DEFAULT		NTK_KIND
 
-#define VENDOR_ID	NTK_KIND
+#define VENDOR_ID	GWM_KIND
 //#define DBFLAG 1
 //#define Default_SourceAddr		//J1939_Addr: SourceAddrATI1 | SourceAddrATO1 | SourceAddrATI2 | SourceAddrATO2
 

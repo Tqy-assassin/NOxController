@@ -1,9 +1,10 @@
 /*
  * vendor.c
  *
- *  Created on: 2020Äê12ÔÂ16ÈÕ
+ *  Created on: 2020ï¿½ï¿½12ï¿½ï¿½16ï¿½ï¿½
  *      Author: tianqingyuan
  */
+#if VENDOR_ID != GWM_KIND
 #include "vendor.h"
 #include "string.h"
 #include "gpio.h"
@@ -24,8 +25,8 @@ extern uint32_t CAN_StartTimemr;
 extern uint8_t CAN_Start;
 
 extern uint32_t StartTimer;
-extern uint32_t CAN_StopTimemr;	//Â¶µãÍ£Ö¹Ê±¼ä
-extern uint8_t CAN_Stop;			//Â¶µãÍ£Ö¹±êÊ¶
+extern uint32_t CAN_StopTimemr;	//Â¶ï¿½ï¿½Í£Ö¹Ê±ï¿½ï¿½
+extern uint8_t CAN_Stop;			//Â¶ï¿½ï¿½Í£Ö¹ï¿½ï¿½Ê¶
 
 extern float Torque;
 extern float Speed;
@@ -39,7 +40,7 @@ extern uint32_t Start_Timer;
 int8_t RxPackflag = 0;
 
 #if VENDOR_ID == NTK_KIND
-J1939_SensorStatus	SensorStatus = {0};	//´«¸ÐÆ÷×´Ì¬
+J1939_SensorStatus	SensorStatus = {0};	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 void JudgeDeviceType(void)
 {
 #if defined(Default_SourceAddr)
@@ -48,19 +49,19 @@ void JudgeDeviceType(void)
 	CONFIG_PIN_AS_GPIO(PTA,PTA1,INPUT);
 	ENABLE_INPUT(PTA, PTA1);
 	if(READ_INPUT(PTA, PTA1) == 0){	//Default_SourceAddr
-		SourceAddr = SourceAddrATI1;//Ç°µªÑõ1£¬PTA1½ÓµØ
+		SourceAddr = SourceAddrATI1;//Ç°ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½PTA1ï¿½Óµï¿½
 	}else{
-		SourceAddr = SourceAddrATO1;//ºóµªÑõ1£¬PTA1¸ßµçÆ½
+		SourceAddr = SourceAddrATO1;//ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½PTA1ï¿½ßµï¿½Æ½
 	}
 #endif
 
-	if(SourceAddr == SourceAddrATI1){//Ç°µªÑõ1
+	if(SourceAddr == SourceAddrATI1){//Ç°ï¿½ï¿½ï¿½ï¿½1
 		TransmitData = TransmitDataATI1;
-	}else if(SourceAddr == SourceAddrATO1){//ºóµªÑõ1
+	}else if(SourceAddr == SourceAddrATO1){//ï¿½ï¿½ï¿½ï¿½1
 		TransmitData = TransmitDataATO1;
-	}else if(SourceAddr == SourceAddrATI2){//Ç°µªÑõ2
+	}else if(SourceAddr == SourceAddrATI2){//Ç°ï¿½ï¿½ï¿½ï¿½2
 		TransmitData = TransmitDataATI2;
-	}else if(SourceAddr == SourceAddrATO2){//ºóµªÑõ2
+	}else if(SourceAddr == SourceAddrATO2){//ï¿½ï¿½ï¿½ï¿½2
 		TransmitData = TransmitDataATO2;
 	}
 }
@@ -90,7 +91,7 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid)//data2
 	uint32_t timer;
 	uint8_t Status;
 	memset(&CTxFrame,0,8);
-	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ÓÅÏÈ¼¶P3Î»£¬±£ÁôÎ»R1Î»£¬Êý¾ÝÒ³DP1Î»£¬PGN£¨PF+PS£©16Î»£¬Ô´µØÖ·SA8Î»
+	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ï¿½ï¿½ï¿½È¼ï¿½P3Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»R1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³DP1Î»ï¿½ï¿½PGNï¿½ï¿½PF+PSï¿½ï¿½16Î»ï¿½ï¿½Ô´ï¿½ï¿½Ö·SA8Î»
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
@@ -100,7 +101,7 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid)//data2
 	NOx_corr_gain = 0;//0 = x *0.1% -100
 	NOx_corr_off = 0;//125
 	OperationHoursCounter = get_new_run_time()/3600;//runtime (h)
-	//ÀàÐÍ
+	//ï¿½ï¿½ï¿½ï¿½
 	CTxFrame.TxFrame.HeaterRatio_L = HeaterRatio & 0xFF;
 	CTxFrame.TxFrame.HeaterRatio_H = HeaterRatio>>8 & 0xFF;
 	CTxFrame.TxFrame.NOx_corr_gain_L = NOx_corr_gain & 0xFF;
@@ -133,13 +134,13 @@ void CAN_DeclareAddress()
 	GeneralTFrame_TypeDef CTxFrame;
 	memset(&CTxFrame,0,8);
 	//3+1+1+16+8 = 29
-	sTxFrameInfo.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ÓÅÏÈ¼¶P3Î»£¬±£ÁôÎ»R1Î»£¬Êý¾ÝÒ³DP1Î»£¬PGN£¨PF+PS£©16Î»£¬Ô´µØÖ·SA8Î»
+	sTxFrameInfo.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ï¿½ï¿½ï¿½È¼ï¿½P3Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»R1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³DP1Î»ï¿½ï¿½PGNï¿½ï¿½PF+PSï¿½ï¿½16Î»ï¿½ï¿½Ô´ï¿½ï¿½Ö·SA8Î»
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
 	sTxFrameInfo.u8BPR = 0x10;
 
-	//ÀàÐÍ  data
+	//ï¿½ï¿½ï¿½ï¿½  data
 	CTxFrame.TxFrame.byte0Data = 0x80;
 	if(SourceAddr == SourceAddrATI1){
 		CTxFrame.TxFrame.byte1Data = 0x11;
@@ -169,10 +170,6 @@ void CAN_DeclareAddress()
 }
 
 
-
-
-
-
 void CAN_CorrectO2NOx_Transmit(uint16_t cmdid)//data3
 {
 	uint16_t cmd = 0;
@@ -197,20 +194,20 @@ void CAN_CorrectO2NOx_Transmit(uint16_t cmdid)//data3
 	uint8_t Status;
 	memset(&CTxFrame,0,8);
 	//3+1+1+16+8 = 29
-	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ÓÅÏÈ¼¶P3Î»£¬±£ÁôÎ»R1Î»£¬Êý¾ÝÒ³DP1Î»£¬PGN£¨PF+PS£©16Î»£¬Ô´µØÖ·SA8Î»
+	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //ï¿½ï¿½ï¿½È¼ï¿½P3Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»R1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³DP1Î»ï¿½ï¿½PGNï¿½ï¿½PF+PSï¿½ï¿½16Î»ï¿½ï¿½Ô´ï¿½ï¿½Ö·SA8Î»
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
 	sTxFrameInfo.u8BPR = 0x10;
 
-	//ÀàÐÍ  data
+	//ï¿½ï¿½ï¿½ï¿½  data
 	CTxFrame.TxFrame.SelfDiagnosisResultValue = 100;
 	CTxFrame.TxFrame.NH3Correction = 0;
-	CTxFrame.TxFrame.NO2Correction = 170; 			//0.85¹Ì¶¨
-//	CTxFrame.TxFrame.CorrectPressureLambda = 72;	//0.36 ÑõÑ¹Á¦ÐÞÕýÏµÊý
-//	CTxFrame.TxFrame.CorrectPressureNOx = 22;		//0.11 µªÑõÑ¹Á¦ÐÞÕýÏµÊý
-	CTxFrame.TxFrame.CorrectPressureLambda = (PCoe->O2_Pressure)/0.5;		//ÑõÑ¹Á¦ÐÞÕýÏµÊý
-	CTxFrame.TxFrame.CorrectPressureNOx = (PCoe->NOx_Pressure)/0.5;		//µªÑõÑ¹Á¦ÐÞÕýÏµÊý
+	CTxFrame.TxFrame.NO2Correction = 170; 			//0.85ï¿½Ì¶ï¿½
+//	CTxFrame.TxFrame.CorrectPressureLambda = 72;	//0.36 ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+//	CTxFrame.TxFrame.CorrectPressureNOx = 22;		//0.11 ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	CTxFrame.TxFrame.CorrectPressureLambda = (PCoe->O2_Pressure)/0.5;		//ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	CTxFrame.TxFrame.CorrectPressureNOx = (PCoe->NOx_Pressure)/0.5;		//ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
 
 	memcpy(sTxFrameInfo.u8DataBuff, CTxFrame.TxData, 8);
 
@@ -226,7 +223,7 @@ void CAN_CorrectO2NOx_Transmit(uint16_t cmdid)//data3
 void CAN_TriggerSelfDiagnosis(uint16_t cmdid,CANRxFrameDataType* RxFrame){
 
 	if(CAN_Start){
-		if(!clock_time_exceed(Start_Timer,120 * 1000)){			//¼ÓÈÈºó120sÄÚ
+		if(!clock_time_exceed(Start_Timer,120 * 1000)){			//ï¿½ï¿½ï¿½Èºï¿½120sï¿½ï¿½
 			if( (cmdid == TransmitDataATI1)||\
 				(cmdid == TransmitDataATO1)||\
 				(cmdid == TransmitDataATI2)||\
@@ -240,12 +237,12 @@ void CAN_TriggerSelfDiagnosis(uint16_t cmdid,CANRxFrameDataType* RxFrame){
 					default:  break;
 				}
 				if((temp <= 4) && (temp >= 1))
-					TriggerSelfDiagnosis = 1;//×ÔÕï¶ÏÄ£Ê½¿ªÆô
+					TriggerSelfDiagnosis = 1;//ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½?
 				else
-					TriggerSelfDiagnosis = 0;//×ÔÕï¶ÏÄ£Ê½¹Ø±Õ
+					TriggerSelfDiagnosis = 0;//ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½Ø±ï¿½?
 			}
 		}else{
-			TriggerSelfDiagnosis = 0;//×ÔÕï¶ÏÄ£Ê½¹Ø±Õ
+			TriggerSelfDiagnosis = 0;//ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½Ø±ï¿½?
 		}
 	}
 }
@@ -441,7 +438,7 @@ void CAN_TxTask(void)
 		TxFrame.TxFrame.ErrorO2 = (SensorStatus.O2Error) ? (SensorStatus.O2Error > 1 ? OpenWire : ShortCircuit) : NoError;
 
 
-		if(TriggerSelfDiagnosis){//×ÔÕï¶Ï
+		if(TriggerSelfDiagnosis){//ï¿½ï¿½ï¿½ï¿½ï¿½?
 			if(workingstage == STAGE_ENVIRONMENT){
 				TxFrame.TxFrame.Diagnosisfeedback = 2;
 			}
@@ -470,10 +467,10 @@ void CAN_TxTask(void)
 		*/
 	}
 
-	sTxFrame.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(TransmitData) | PDU_SA(SourceAddr);//ÓÅÏÈ¼¶P3Î»£¬±£ÁôÎ»R1Î»£¬Êý¾ÝÒ³DP1Î»£¬PGN£¨PF+PS£©16Î»£¬Ô´µØÖ·SA8Î»
-	sTxFrame.bIsExtOrStand = 1;//À©Õ¹Ö¡
-	sTxFrame.bIsRemoteFrame = 0;//·ÇÔ¶³ÌÖ¡£¬¼´Êý¾ÝÖ¡
-	sTxFrame.u32DataLength = 8;//Êý¾Ý³¤¶È8×Ö½Ú
+	sTxFrame.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(TransmitData) | PDU_SA(SourceAddr);//ï¿½ï¿½ï¿½È¼ï¿½P3Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»R1Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³DP1Î»ï¿½ï¿½PGNï¿½ï¿½PF+PSï¿½ï¿½16Î»ï¿½ï¿½Ô´ï¿½ï¿½Ö·SA8Î»
+	sTxFrame.bIsExtOrStand = 1;//ï¿½ï¿½Õ¹Ö¡
+	sTxFrame.bIsRemoteFrame = 0;//ï¿½ï¿½Ô¶ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡
+	sTxFrame.u32DataLength = 8;//ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½8ï¿½Ö½ï¿½
 	sTxFrame.u8BPR = 0x10;
 	memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
 	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
@@ -619,9 +616,9 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 
 	for(i = 0;i<5;i++){
 		if(Rx_Buf[i] == NormalValue[i]){
-			Status &= ~(1<<i);//ÈôÕý³£ÄÇÒ»Î»Îª0
+			Status &= ~(1<<i);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª0
 		}else{
-			Status |= 1<<i;//Èô´íÎóÄÇÒ»Î»Îª1
+			Status |= 1<<i;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î»Îª1
 		}
 	}
 
@@ -756,4 +753,4 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 	}
 }
 #endif
-
+#endif

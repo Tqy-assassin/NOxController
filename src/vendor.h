@@ -1,12 +1,33 @@
 /*
  * vendor.h
  *
- *  Created on: 2020Äê12ÔÂ16ÈÕ
+ *  Created on: 2020ï¿½ï¿½12ï¿½ï¿½16ï¿½ï¿½
  *      Author: tianqingyuan
  */
 
 #ifndef VENDOR_H_
 #define VENDOR_H_
+
+//=========================================================
+#define PDU_P_MASK		0x1C000000
+#define PDU_P_SHIFT		26
+#define PDU_P(x)		(((uint32_t)(((uint32_t)(x))<<PDU_P_SHIFT))&PDU_P_MASK)
+#define PDU_R_MASK		0x02000000
+#define PDU_R_SHIFT		25
+#define PDU_R(x)		(((uint32_t)(((uint32_t)(x))<<PDU_R_SHIFT))&PDU_R_MASK)
+#define PDU_DP_MASK		0x01000000
+#define PDU_DP_SHIFT	24
+#define PDU_DP(x)		(((uint32_t)(((uint32_t)(x))<<PDU_DP_SHIFT))&PDU_DP_MASK)
+#define PDU_PGN_MASK	0x00FFFF00
+#define PDU_PGN_SHIFT	8
+#define PDU_PGN(x)		(((uint32_t)(((uint32_t)(x))<<PDU_PGN_SHIFT))&PDU_PGN_MASK)
+#define PDU_SA_MASK		0x000000FF
+#define PDU_SA_SHIFT	0
+#define PDU_SA(x)		(((uint32_t)(x))&PDU_SA_MASK)
+
+#if VENDOR_ID == GWM_KIND
+#include "gwm_vendor.h"
+#else
 #include "config.h"
 #include "common.h"
 #include "can_api.h"
@@ -48,16 +69,16 @@ typedef struct{
 			uint16_t NOx;
 			uint16_t O2;
 			struct{
-				uint8_t SupplyinRange :2;//×Ö½ÚµÍ
+				uint8_t SupplyinRange :2;//ï¿½Ö½Úµï¿½
 				uint8_t TempHeaterElement :2;
 				uint8_t NOxSignal :2;
-				uint8_t O2Signal :2;//×Ö½Ú¸ß
+				uint8_t O2Signal :2;//ï¿½Ö½Ú¸ï¿½
 			}StatusByte;
 			uint8_t ErrorHeater : 5;
 			uint8_t StatusHeaterMode : 2;
 			uint8_t Noused_1 :1;
 			uint8_t ErrorNOx :5;
-			uint8_t Diagnosisfeedback  :3;		//×ÔÕï
+			uint8_t Diagnosisfeedback  :3;		//ï¿½ï¿½ï¿½ï¿½
 			uint8_t ErrorO2  :5;
 			uint8_t Noused_3 :3;
 		}TxFrame;
@@ -210,22 +231,7 @@ typedef struct{
 	};
 }TramsmitFrame_TypeDef;
 #endif
-//=========================================================
-#define PDU_P_MASK		0x1C000000
-#define PDU_P_SHIFT		26
-#define PDU_P(x)		(((uint32_t)(((uint32_t)(x))<<PDU_P_SHIFT))&PDU_P_MASK)
-#define PDU_R_MASK		0x02000000
-#define PDU_R_SHIFT		25
-#define PDU_R(x)		(((uint32_t)(((uint32_t)(x))<<PDU_R_SHIFT))&PDU_R_MASK)
-#define PDU_DP_MASK		0x01000000
-#define PDU_DP_SHIFT	24
-#define PDU_DP(x)		(((uint32_t)(((uint32_t)(x))<<PDU_DP_SHIFT))&PDU_DP_MASK)
-#define PDU_PGN_MASK	0x00FFFF00
-#define PDU_PGN_SHIFT	8
-#define PDU_PGN(x)		(((uint32_t)(((uint32_t)(x))<<PDU_PGN_SHIFT))&PDU_PGN_MASK)
-#define PDU_SA_MASK		0x000000FF
-#define PDU_SA_SHIFT	0
-#define PDU_SA(x)		(((uint32_t)(x))&PDU_SA_MASK)
+
 //=========================================================
 enum{
 #if VENDOR_ID == NTK_KIND
@@ -334,4 +340,5 @@ enum{
 	InspectBit6 = 64,
 	InspectBit7 = 128
 }InspectTypeDef;
+#endif /* VENDOR_ID == GWM_KIND*/
 #endif /* VENDOR_H_ */

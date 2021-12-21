@@ -1,7 +1,7 @@
 /*
  * can_manage.c
  *
- *  Created on: 2021Äê4ÔÂ1ÈÕ
+ *  Created on: 2021ï¿½ï¿½4ï¿½ï¿½1ï¿½ï¿½
  *      Author: sunkaixiang
  */
 
@@ -82,7 +82,7 @@ enum PrivateParamList{
 	Coeffi_Save,
   	Coeffi_O2_k,
   	Coeffi_O2_d,
-	//A1,B1,A2,B2¼ÆËãµªÑõÖµ¶þµã·½·¨
+	//A1,B1,A2,B2ï¿½ï¿½ï¿½ãµªï¿½ï¿½Öµï¿½ï¿½ï¿½ã·½ï¿½ï¿½
   	Coeffi_NOx_A1,
   	Coeffi_NOx_B1,
   	Coeffi_NOx_A2,
@@ -109,13 +109,13 @@ enum PrivateParamList{
 	PID_IP2_P,
 	PID_IP2_I,
 	PID_IP2_D,
-//A1,B1,A2,B2,A3,B3,A4,B4¼ÆËãµªÑõÖµÈýµã·½·¨
+//A1,B1,A2,B2,A3,B3,A4,B4ï¿½ï¿½ï¿½ãµªï¿½ï¿½Öµï¿½ï¿½ï¿½ã·½ï¿½ï¿½
   	Coeffi_NOx_A3,
   	Coeffi_NOx_B3,
   	Coeffi_NOx_A4,
   	Coeffi_NOx_B4,
 
-	//¼ÆËãµªÑõÖµ¶þ´Î·½·¨
+	//ï¿½ï¿½ï¿½ãµªï¿½ï¿½Öµï¿½ï¿½ï¿½Î·ï¿½ï¿½ï¿½
   	Coeffi_NOx_a1,
   	Coeffi_NOx_b1,
   	Coeffi_NOx_c1,
@@ -183,7 +183,7 @@ extern uint8_t InspectResult[];
 extern uint8_t NoPIDflag;
 extern LoopArray NOxTotle;
 extern float Vref;
-uint32_t NOValueOffsetTimer = 0;	//µªÑõÊä³öÖµÐÞÕý¶¨Ê±Æ÷
+uint32_t NOValueOffsetTimer = 0;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 uint32_t O2CValueOffsetTimer = 0;
 //uint8_t Version[] = VERSION;
 uint8_t Version[] = VERSION;
@@ -191,21 +191,21 @@ uint8_t Manufacturers[] = VERSION;
 
 uint32_t DATA2_1STimer = 0;
 
-float O2C = 4;		//O2Å¨¶È %
-float NOxC;		//NOxÅ¨¶È ppm
-float NOxOUT;		//NOxÅ¨¶È ppm
+float O2C = 4;		//O2Å¨ï¿½ï¿½ %
+float NOxC;		//NOxÅ¨ï¿½ï¿½ ppm
+float NOxOUT;		//NOxÅ¨ï¿½ï¿½ ppm
 void Cmd_StopHandle(void);
-void Can_Init(void);			//ÅäÖÃCAN£¬²¢³õÊ¼»¯
-void CAN_RxHandle(void);			//CAN½ÓÊÕÖÐ¶Ï
-void AtmosphereCalculate(void);		//Æø·Õ¼ÆËã
-void Status_Detect(void);			//×´Ì¬ÅÐ¶Ï
-void CAN_TxTask(void);				//CANÊý¾Ý´¦Àí²¢·¢ËÍ
-void CAN_TxDataTask(void);			//CAN·¢ËÍÊýÖµ
-void CAN_CMDTransmit(uint16_t cmdid,uint8_t* data,uint32_t Timeout_ms);			//CAN·¢ËÍÃüÁî
-uint8_t CAN_Start = 0;			//Â¶µãÆô¶¯±êÊ¶
-uint32_t CAN_StartTimemr = 0;	//Â¶µãÆô¶¯¶¨Ê±Æ÷
-uint32_t CAN_StopTimemr = 0;	//Â¶µãÍ£Ö¹Ê±¼ä
-uint8_t CAN_Stop = 0;			//Â¶µãÍ£Ö¹±êÊ¶
+void Can_Init(void);			//ï¿½ï¿½ï¿½ï¿½CANï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+void CAN_RxHandle(void);			//CANï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+void AtmosphereCalculate(void);		//ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½
+void Status_Detect(void);			//×´Ì¬ï¿½Ð¶ï¿½
+void CAN_TxTask(void);				//CANï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+void CAN_TxDataTask(void);			//CANï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+void CAN_CMDTransmit(uint16_t cmdid,uint8_t* data,uint32_t Timeout_ms);			//CANï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+uint8_t CAN_Start = 0;			//Â¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶
+uint32_t CAN_StartTimemr = 0;	//Â¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+uint32_t CAN_StopTimemr = 0;	//Â¶ï¿½ï¿½Í£Ö¹Ê±ï¿½ï¿½
+uint8_t CAN_Stop = 0;			//Â¶ï¿½ï¿½Í£Ö¹ï¿½ï¿½Ê¶
 uint16_t PaivateTxInterval = 50;
 uint32_t PeriodPaivateTxTimer = 0;
 
@@ -224,8 +224,8 @@ float GasMassFlow;
 //#define Lambda	(1)
 //#define KNO2 	(0.825)
 //#define KNH3	(1.05)
-//float Pactual = 101.3;	//ÆøÑ¹
-//float NH3C = 0;	//NH3Å¨¶È
+//float Pactual = 101.3;	//ï¿½ï¿½Ñ¹
+//float NH3C = 0;	//NH3Å¨ï¿½ï¿½
 
 /*#include "ASIC_controller.h"
 #define COMM			(-2)
@@ -420,19 +420,19 @@ uint8_t RS_flipflop(uint8_t R,uint8_t S){
     return Q;
 }
 
-//1:Ô¤²â  0:²âÁ¿
+//1:Ô¤ï¿½ï¿½  0:ï¿½ï¿½ï¿½ï¿½
 //uint8_t O2CNOx_To_RS(float O2C,float NOx){
 //	return RS_flipflop((uint8_t)(NOx > 50), (uint8_t)(O2C >= 20.5));
 //}
 
 float NOxHandle(float O2C,float NOxCAN){
 	static float PRNOxCAN;
-	if(RS_flipflop((uint8_t)(NOxCAN > 50), (uint8_t)(O2C >= 20.5))){//Ô¤²âÄ£ÐÍ
+	if(RS_flipflop((uint8_t)(NOxCAN > 50), (uint8_t)(O2C >= 20.5))){//Ô¤ï¿½ï¿½Ä£ï¿½ï¿½
 		if(clock_time_exceed(O2CValueOffsetTimer,500) && RS_flipflop((uint8_t)(NOxCAN > 50), (uint8_t)(O2C >= 20.5))){
 			O2CValueOffsetTimer = Gets_Clock_value();
 			PRNOxCAN = 0.95 * ZeroFitting(NOxCAN) + 0.05 * NOxCAN;
 		}
-	}else{//²âÁ¿Ä£ÐÍ
+	}else{//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
 		O2CValueOffsetTimer = Gets_Clock_value();
 		PRNOxCAN = NOxCAN;
 	}
@@ -1210,7 +1210,7 @@ void CAN_TxDataTask(void){
 void CAN_control(void){
 	can_receive();
 	can_transmit();
-	if(clock_time_exceed(CAN_RxManyPostbackTimemr,20)){//20ms·¢Ò»´Î
+	if(clock_time_exceed(CAN_RxManyPostbackTimemr,20)){//20msï¿½ï¿½Ò»ï¿½ï¿½
 		CAN_RxManyPostbackTimemr = Gets_Clock_value();
 		CAN_RxManyPostback();
 	}
@@ -1220,7 +1220,7 @@ void FTM1_Task(void)
 {
 	if(FTM_GetOverFlowFlag(FTM1)){
 		FTM_ClrOverFlowFlag(FTM1);
-		if(CAN_Start && CAN_StartTimemr && clock_time_exceed(CAN_StartTimemr,300*1000)){	//³¬Ê±ºó£¬Í£Ö¹¹¤×÷
+		if(CAN_Start && CAN_StartTimemr && clock_time_exceed(CAN_StartTimemr,300*1000)){	//ï¿½ï¿½Ê±ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½
 			CAN_Start = 0;
 			CAN_StartTimemr = 0;
 			set_working_stage(STAGE_IDLE);
@@ -1228,7 +1228,7 @@ void FTM1_Task(void)
 		Status_Detect();
 		AtmosphereCalculate();
 		CAN_TxTask();//DATA1
-		if(clock_time_exceed(DATA2_1STimer, 1000)){			//ÖÜÆÚÐÔÊÂ¼þ T=1s
+		if(clock_time_exceed(DATA2_1STimer, 1000)){			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ T=1s
 			DATA2_1STimer = Gets_Clock_value();
 			CAN_TxDATA2();
 		}
@@ -1259,7 +1259,7 @@ void CAN_ECU_Init(void){
 
 void Can_Init(){
 #ifdef CAN_CONTROL
-	CAN_ECU_Init();//¶ÔECU·¢ËÍ½ÓÊÕ
+	CAN_ECU_Init();//ï¿½ï¿½ECUï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½
 	CAN_PC_Init();
 #endif
 }
