@@ -257,7 +257,7 @@ void test(void){
 		TxFrame.Paivate_Cmd.param = Param_Comm;
 		TxFrame.Paivate_Cmd.datas.Float = data4;
 		memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-		CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+		CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 	}
 }
 */
@@ -305,9 +305,9 @@ float get_NOxC(void){
 	return NOxC;
 }
 
+static MSCAN_ConfigType sMSCANConfig = {{0}};
 void CAN_PC_Init(void)
 {
-	MSCAN_ConfigType sMSCANConfig = {{0}};
 	MSCAN_GlobeVaribleInit(MSCAN);
 	SIM->PINSEL1 |= SIM_PINSEL1_MSCANPS_MASK;
 //Baud_RATE = 24M/(BAUD_RATE_BRP+1)/(BAUD_RATE_SJW)/(1 + BAUD_RATE_TSEG1+BAUD_RATE_TSEG2)
@@ -500,7 +500,22 @@ void AtmosphereCalculate(void){
 
 }
 
-void CAN_CMDTransmit(uint16_t cmdid,uint8_t* data,uint32_t Timeout_ms)
+uint8_t CAN_TransmitItem(MSCAN_Type *pCANx,ItemInfoPtr pTxItemInfo,FrameBufferInfoPtr pTxBuffInfo)
+{
+	static uint8_t Failed_count = 0;
+	if(CAN_TransmitItemByInt(pCANx, pTxItemInfo, pTxBuffInfo) == FALSE){
+		Failed_count++;
+		if(Failed_count >= 100){
+			CAN_DeInit(pCANx);
+			CAN_Init(pCANx, &sMSCANConfig);
+			Failed_count = 0;
+		}
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void CAN_CMDTransmit(uint16_t cmdid, uint8_t* data, uint32_t Timeout_ms)
 {
 	ItemInfoType sTxFrameInfo;
 	uint32_t timer;
@@ -513,7 +528,7 @@ void CAN_CMDTransmit(uint16_t cmdid,uint8_t* data,uint32_t Timeout_ms)
 	memcpy(sTxFrameInfo.u8DataBuff, data, 8);
 	timer = Gets_Clock_value();
 	do{
-		Status = CAN_TransmitItemByInt(MSCAN,&sTxFrameInfo,&sCAN_TxBuff);
+		Status = CAN_TransmitItem(MSCAN,&sTxFrameInfo,&sCAN_TxBuff);
 		if(clock_time_exceed(timer,Timeout_ms)){
 			break;
 		}
@@ -1134,77 +1149,77 @@ void CAN_TxDataTask(void){
 	TxFrame.Paivate_Cmd.param = Param_Vref0;
 	TxFrame.Paivate_Cmd.datas.Float = ADtf_Value->Vref0Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Vref1;
 	TxFrame.Paivate_Cmd.datas.Float = ADtf_Value->Vref1Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Vref2;
 	TxFrame.Paivate_Cmd.datas.Float = ADtf_Value->Vref2Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Ip0;
 	TxFrame.Paivate_Cmd.datas.Float = Ip->Ip0_Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Ip1;
 	TxFrame.Paivate_Cmd.datas.Float = Ip->Ip1_Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Ip2;
 	TxFrame.Paivate_Cmd.datas.Float = Ip->Ip2_Value;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Comm;
 	TxFrame.Paivate_Cmd.datas.Float = ADtf_Value->VCommValue;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Temp;
 	TxFrame.Paivate_Cmd.datas.Float = ADtf_Value->VTempValue;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Test;
 	TxFrame.Paivate_Cmd.datas.Float = Vref;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_PWMDuty;
 	TxFrame.Paivate_Cmd.datas.Float = get_PWM_Duty_Cycle();
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Stage;
 	TxFrame.Paivate_Cmd.datas.Uint32 = get_working_stage();
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_O2C;
 	TxFrame.Paivate_Cmd.datas.Float = O2C;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_NOC;
 	TxFrame.Paivate_Cmd.datas.Float = NOxC;
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Inspect;
 	memcpy(TxFrame.Paivate_Cmd.datas.Uint8,	&InspectResult[1], 4);
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 
 	TxFrame.Paivate_Cmd.param = Param_Status;
 	TxFrame.Paivate_Cmd.datas.Uint32 = Status_Get();
 	memcpy(sTxFrame.u8DataBuff, TxFrame.RxData, 8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+	CAN_TransmitItem(MSCAN,&sTxFrame,&sCAN_TxBuff);
 }
 
 void CAN_control(void){
