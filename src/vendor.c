@@ -4,7 +4,7 @@
  *  Created on: 2020��12��16��
  *      Author: tianqingyuan
  */
-#if VENDOR_ID != GWM_KIND
+
 #include "vendor.h"
 #include "string.h"
 #include "gpio.h"
@@ -15,6 +15,8 @@
 #include <string.h>
 #include "flash_manage.h"
 #include "common.h"
+
+#if VENDOR_ID != GWM_KIND
 
 uint32_t SourceAddr = 0;
 uint32_t TransmitData = 0;

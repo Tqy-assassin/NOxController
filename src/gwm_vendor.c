@@ -4,7 +4,7 @@
  *  Created on: 2021年12月15日
  *      Author: Administrator
  */
-#if VENDOR_ID == GWM_KIND
+
 #include "gwm_vendor.h"
 #include "string.h"
 #include "gpio.h"
@@ -16,6 +16,7 @@
 #include "flash_manage.h"
 #include "common.h"
 
+#if VENDOR_ID == GWM_KIND
 uint32_t SourceAddr = 0;
 uint32_t TransmitData = 0;
 

@@ -1,7 +1,7 @@
 /*
  * sensor_control.c
  *
- *  Created on: 2021Äê4ÔÂ1ÈÕ
+ *  Created on: 2021ï¿½ï¿½4ï¿½ï¿½1ï¿½ï¿½
  *      Author: sunkaixiang
  */
 #include "sensor_control.h"
@@ -19,15 +19,15 @@
 #include "printf.h"
 #include "common.h"
 #include "vendor.h"
-void Survey_Ready(void);		//PID×¼±¸
-void Survey_Controller(void);	//PID¿ØÖÆ
-void Value_Dispose(void);		//Êý¾Ý½âÎö
-void PIT0_init(void);			//ÖÐ¶Ï¶¨Ê±Æ÷
-void PIT1_init(void);			//ÖÐ¶Ï¶¨Ê±Æ÷
-void PIT_Task0(void);			//¶¨Ê±Æ÷1ÖÐ¶Ï
+void Survey_Ready(void);		//PID×¼ï¿½ï¿½
+void Survey_Controller(void);	//PIDï¿½ï¿½ï¿½ï¿½
+void Value_Dispose(void);		//ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½
+void PIT0_init(void);			//ï¿½Ð¶Ï¶ï¿½Ê±ï¿½ï¿½
+void PIT1_init(void);			//ï¿½Ð¶Ï¶ï¿½Ê±ï¿½ï¿½
+void PIT_Task0(void);			//ï¿½ï¿½Ê±ï¿½ï¿½1ï¿½Ð¶ï¿½
 void PIT_Task1(void);
-void ASIC_DACAndInspectHandler(void);//°²É­ÃÀDACÃüÁîºÍ×Ó¼ì²â¿ØÖÆ¾ä±ú
-void ASIC_ReadMeasurementResultHandler(void);//°²É­ÃÀ¶ÁÈ¡²âÁ¿½á¹û¿ØÖÆ¾ä±ú
+void ASIC_DACAndInspectHandler(void);//ï¿½ï¿½É­ï¿½ï¿½DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½Æ¾ï¿½ï¿½
+void ASIC_ReadMeasurementResultHandler(void);//ï¿½ï¿½É­ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¾ï¿½ï¿½
 void get_ip012(uint32_t* ip0,uint16_t* ip1,uint16_t* ip2);
 void Value_Dispose(void);
 
@@ -108,7 +108,7 @@ SurveyVariate_Type Vref1 = {0};				//Ip1 -> Vref1
 SurveyVariate_Type Vref2 = {0};				//Ip2 -> Vref2
 
 uint8_t ASIC_Flag = 1;
-uint8_t HEXorDEC = 0;			//0£º10½øÖÆ£»1£º16½øÖÆ
+uint8_t HEXorDEC = 0;			//0ï¿½ï¿½10ï¿½ï¿½ï¿½Æ£ï¿½1ï¿½ï¿½16ï¿½ï¿½ï¿½ï¿½
 
 uint8_t DBFS = 2;
 
@@ -122,7 +122,7 @@ float Kp[7][5] =	   {
 							{1000, 1000, 1000, 1000, 1000},			//1: I1--->V1
 							{50,   50,   50,   50,   50},			//2: I2--->V2(1)
 							{0.0005,0.0005,0.0005,0.0005,0.0005},	//3: I1--->V0
-							{0.005,0.005,0.005,0.005,0.005},		//4: I1+²é±í--->V0
+							{0.005,0.005,0.005,0.005,0.005},		//4: I1+ï¿½ï¿½ï¿½--->V0
 							{7776,7776,7776,9331,11197},			//5: I0--->V0(2)//7776
 							{50,   50,   50,   50,   50}			//6: I2--->V2(2)
 																		};
@@ -132,7 +132,7 @@ float Ki[7][5] = 	   {
 							{900,  900,  900,  900,  900},				//1: I1--->V1
 							{5,  5,  5,  5,  5},						//2: I2--->V2(1)
 							{0.00001,0.00001,0.00001,0.00001,0.00001},	//3: I1--->V0
-							{0.0002,0.0002,0.0002,0.0002,0.0002},		//4: I1+²é±í--->V0
+							{0.0002,0.0002,0.0002,0.0002,0.0002},		//4: I1+ï¿½ï¿½ï¿½--->V0
 							{2000, 2000, 2000, 2000, 2000},				//5: I0--->V0(2)
 							{5,  5,  5,  5,  5}							//6: I2--->V2(2)
 																		};
@@ -142,7 +142,7 @@ float Kd[7][5] = 	   {
 							{0,0,0,0,0},							//1: I1--->V1
 							{0,0,0,0,0},							//2: I2--->V2(1)
 							{0.0001,0.0001,0.0001,0.0001,0.0001},	//3: I1--->V0
-							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+²é±í--->V0
+							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+ï¿½ï¿½ï¿½--->V0
 							{0,0,0,0,0},							//5: I0--->V0(2)
 							{0,0,0,0,0}								//2: I2--->V2(2)
 																	};
@@ -152,7 +152,7 @@ float Kd[6][5] = 	   {
 							{100, 100, 100, 100, 100},				//1: I1--->V1
 							{1,  1,  1,  1,  1},					//2: I2--->V2
 							{0.0001,0.0001,0.0001,0.0001,0.0001},	//3: I1--->V0
-							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+²é±í--->V0
+							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+ï¿½ï¿½ï¿½--->V0
 							{2000,2000,2000,2000,2000}				//5: I0--->V0(2)
 																	};
 */
@@ -179,8 +179,8 @@ IpValue Ip_Value =
 		.Ip2_Value = 0
 	};
 
-float Vref0_V = 0.35;					//Vref0Ä¿±êÖµ
-float Vref1_V = 0.405;					//Vref1Ä¿±êÖµ
+float Vref0_V = 0.35;					//Vref0Ä¿ï¿½ï¿½Öµ
+float Vref1_V = 0.405;					//Vref1Ä¿ï¿½ï¿½Öµ
 int16_t adc_value[6];
 
 ADtfValue ADtf_Value = {0,0,0,0,0,0};
@@ -206,7 +206,7 @@ void init_Ip_Value(void){
 }
 
 
-void ASIC_DACAndInspectHandler(void){					//FTM2Òç³öÖÐ¶Ï		·¢ËÍIP0 IP1 IP2ÊýÖµ¿ØÖÆ
+void ASIC_DACAndInspectHandler(void){					//FTM2ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½		ï¿½ï¿½ï¿½ï¿½IP0 IP1 IP2ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
 	extern uint8_t Sensor_Status;
 //	__IO ASIC_StatusTypeDef Status;
 	uint32_t ip0;
@@ -410,7 +410,7 @@ void ASIC_DACAndInspectHandler(void){					//FTM2Òç³öÖÐ¶Ï		·¢ËÍIP0 IP1 IP2ÊýÖµ¿ØÖ
 
 
 
-void ASIC_ReadMeasurementResultHandler(void){					//·¢ËÍ°²É­ÃÀÊý¾Ý²É¼¯ÃüÁî
+void ASIC_ReadMeasurementResultHandler(void){					//ï¿½ï¿½ï¿½Í°ï¿½É­ï¿½ï¿½ï¿½ï¿½ï¿½Ý²É¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	static uint8_t count = 0;//,heatinit = 1;
 //	ASIC_ReadMeasurementResultFlag = 0;
 	switch(get_working_stage()){
@@ -646,7 +646,7 @@ void MCLK_init(void)
 
 	FTM0CH1_Config.ctrl.bits.bMode=FTM_PWMMODE_EDGEALLIGNED;
 	FTM0CH1_Config.ctrl.bits.bPWMPol=FTM_PWM_HIGHTRUEPULSE;
-	FTM0CH1_Config.u16CnV=12;//Õ¼¿Õ±È0.5
+	FTM0CH1_Config.u16CnV=12;//Õ¼ï¿½Õ±ï¿½0.5
 
 //	FTM_SetCallback(FTM0, FTM_Task);
 	FTM_ChannelInit(FTM0,1,FTM0CH1_Config);
@@ -733,7 +733,7 @@ void spi_start(void)
 }
 
 
-void Value_Dispose(void)		//Êý¾Ý½âÎö£¬»»ËãAD¶ÁÈ¡Öµ
+void Value_Dispose(void)		//ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ADï¿½ï¿½È¡Öµ
 {
 	ADtf_Value.Vref0Value = (float)adc_value[0]*IP0_ADC_COEF/8192;
 	ADtf_Value.Vref1Value = (float)adc_value[1]*IP1_ADC_COEF/8192;
@@ -872,21 +872,21 @@ void Survey_Controller(void){
 #if VREF0_METHOD == 1
 		IP1.E_2 = IP1.E_1;
 		IP1.E_1 = IP1.E;
-		IP1.E = CLT.Ip1 - Ip1_Value;
+		IP1.E = CLT_pointer()->Ip1 - Ip_Value.Ip1_Value;
 		IP1.dE = IP1.E - IP1.E_1;
-		fuzzy_Controller(&IP1);			//Ä£ºý×ÔÊÊÓ¦£¬°´Ðè×Ô¶¯µ÷½ÚIP1.KiµÄÖµ
+		fuzzy_Controller(&IP1);			//Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½IP1.Kiï¿½ï¿½Öµ
 
 	//	if(myabs(IP1.E) > 0.1){
 		float Vref0_inc;
 		Vref0_inc = (IP1.Kp+IP1.Ki+IP1.Kd)*IP1.E - (IP1.Kp+2*IP1.Kd)*IP1.E_1 + IP1.Kd*IP1.E_2;
-		if(myabs(Vref0.E) > 0.1){			//Vref0Î´µ½´ïÄ¿±êÖµÊ±  ·Å»º¶ÔVref0Ä¿±êÖµµÄ±ä»¯
+		if(myabs(Vref0.E) > 0.1){			//Vref0Î´ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ÖµÊ±  ï¿½Å»ï¿½ï¿½ï¿½Vref0Ä¿ï¿½ï¿½Öµï¿½Ä±ä»¯
 			Vref0_inc /= 2.0;
-		}else if(myabs(IP1.dE) < 1){		//Ip1¶¶¶¯½ÏÐ¡Ê±£¬¼°Ip1³õ²½ÎÈ¶¨£¬ÔòÔö´óPIDÔöÁ¿£¬¼Ó¿ìIp1±Õ»·µ½7uAµÄËÙ¶È
+		}else if(myabs(IP1.dE) < 1){		//Ip1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Ê±ï¿½ï¿½ï¿½ï¿½Ip1ï¿½ï¿½ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½Ip1ï¿½Õ»ï¿½ï¿½ï¿½7uAï¿½ï¿½ï¿½Ù¶ï¿½
 			if(IP1.E*Vref0_inc > 0){
 				Vref0_inc *= 3;
 			}
-			if(ADtf_Value.Vref0Value > CLT.Vref0Limit){
-				Vref0_V = CLT.Vref0Limit;
+			if(ADtf_Value.Vref0Value > CLT_pointer()->Vref0Limit){
+				Vref0_V = CLT_pointer()->Vref0Limit;
 			}
 		}
 		Vref0_V -= Vref0_inc;
@@ -967,7 +967,7 @@ void Survey_Controller(void){
 	Ip_Value.Ip2_Value = Ip_Value.Ip2_Value < Ip2_MaxValue ? (Ip_Value.Ip2_Value > Ip2_MinValue ? Ip_Value.Ip2_Value : Ip2_MinValue) : Ip2_MaxValue;
 
 //===================================================================================================================
-//	if(Vref0Value > 0.35){				//ÅÐ¶ÏVref0´óÓÚ350mV£¬Èô³¤Ê±¼ä´óÓÚÔòÀ­»ØÖÁ350mV
+//	if(Vref0Value > 0.35){				//ï¿½Ð¶ï¿½Vref0ï¿½ï¿½ï¿½ï¿½350mVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½350mV
 //		count1++;
 //		if(count1>100 * 30){
 //			Vref0_V = 0.35;
@@ -1010,11 +1010,11 @@ void Survey_Controller(void){
 }
 
 void sensor_init(void){
-	MCLK_init();//³õÊ¼»¯MCLK
+	MCLK_init();//ï¿½ï¿½Ê¼ï¿½ï¿½MCLK
 	ASIC_SPI_Init(SPI0);
-	spi_start();//Æô¶¯ONSEMEÐ¾Æ¬
+	spi_start();//ï¿½ï¿½ï¿½ï¿½ONSEMEÐ¾Æ¬
 	FTM_SetCallback(FTM2, FTM2_Task);
-	PID_init();//PID²ÎÊý³õÊ¼»¯
+	PID_init();//PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
 }
 
 

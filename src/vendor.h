@@ -25,13 +25,13 @@
 #define PDU_SA_SHIFT	0
 #define PDU_SA(x)		(((uint32_t)(x))&PDU_SA_MASK)
 
-#if VENDOR_ID == GWM_KIND
-#include "gwm_vendor.h"
-#else
 #include "config.h"
 #include "common.h"
 #include "can_api.h"
 
+#if VENDOR_ID == GWM_KIND
+#include "gwm_vendor.h"
+#else
 
 #if VENDOR_ID == NTK_KIND
 #define CANTx_INTERVAL	50	//(ms)
