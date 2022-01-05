@@ -276,8 +276,8 @@ enum{
 	TransmitMessage   = 61680,	//
 #endif
 
-	PrivateCmd_Intake = 36690,//0x8F52
-	PrivateCmd_Outlet = 36689,//0x8F51
+	PrivateCmd_Intake = 0x5A99,
+	PrivateCmd_Outlet = 0x99A5,
 }J1939_PGN;
 
 #define DewPoint_Invalid 	0
