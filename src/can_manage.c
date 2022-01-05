@@ -391,7 +391,7 @@ void can_transmit(void){
 			if(strlen(uart_line_buf))
 			MOVERIGHT(strlen(uart_line_buf));
 #endif
-  }
+  	}
 }
 
 float Twopoint_equation(float x1,float y1,float x2,float y2,float x){
@@ -573,7 +573,7 @@ void CAN_RxHandle(void)
 	uint8_t TA;		//Target Address
 #endif
 	if(CAN_ReadOneFramefromBufferQueue(&pRxFrame)){
-		if(pRxFrame.bIsExtOrStand){
+		if(pRxFrame.bIsExtOrStand == 1){
 			PGN = (pRxFrame.ID_Type.ID & PDU_PGN_MASK) >> PDU_PGN_SHIFT;
 #ifdef JUDGE_RECEIVE
 			SA = (uint8_t)((pRxFrame.CAN_ID.ID & PDU_SA_MASK) >> PDU_SA_SHIFT);
