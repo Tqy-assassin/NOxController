@@ -483,7 +483,11 @@ void AtmosphereCalculate(void){
 		NOxCAN = sA*Ip2Avg*Ip2Avg + sB*Ip2Avg + sC;
 	}
 
-	O2C = O2C > 21.5 ? 21.5 : (O2C < -12 ? -12 : O2C);
+//	O2C = O2C > 21.5 ? 21.5 : (O2C < -12 ? -12 : O2C);
+	O2C = O2C < -12 ? -12 : O2C;
+	if(O2C > 20.5){
+		O2C = 20.8 - (0.09 / (O2C - 20.2));
+	}
 
 	if(NOxCAN < 0){
 		NOxCAN = 1 / (2 - NOxCAN);
@@ -542,13 +546,13 @@ void Status_Detect(void)
 	IpValue * Ip = get_Ip_Value();
 	ADtfValue * ADtf = get_ADtf_Value();
 	if(get_working_stage() == STAGE_ENVIRONMENT){
-		if((Ip->Ip0_Value < 5000) && (Ip->Ip0_Value > 100) && (ADtf->Vref1Value >= 0.35) && (ADtf->Vref1Value <= 0.5) && (NoPIDflag == 0)){
+		if((Ip->Ip0_Value < 5000) && (Ip->Ip0_Value > 10) && (ADtf->Vref1Value >= 0.3) && (ADtf->Vref1Value <= 0.5) && (NoPIDflag == 0)){
 			Status_O2Valid();
 		}else{
 			Status_O2nValid();
 		}
 
-		if((Ip->Ip2_Value < 12) && (Ip->Ip2_Value > -12) && (ADtf->Vref2Value >= 0.4) && (ADtf->Vref2Value <= 0.6) && (NoPIDflag == 0)){
+		if((Ip->Ip2_Value < 12) && (Ip->Ip2_Value > -12) && (ADtf->Vref2Value >= 0.3) && (ADtf->Vref2Value <= 0.6) && (NoPIDflag == 0)){
 			Status_NOxValid();
 		}else{
 			Status_NOxnValid();

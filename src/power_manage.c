@@ -33,7 +33,7 @@ void Judge_WorkVoltage(void)
 
     Voltage_BeforeTransf = ADC_PollRead(ADC,ADC_CHANNEL_AD3);
     ADC_DeInit(ADC);
-    Volage_AfterTransf = (((float)Voltage_BeforeTransf * 5.0 / 4096) - 0.1) / 0.1485;
+    Volage_AfterTransf = (((float)Voltage_BeforeTransf * 5.0 / 4096) - 0.1) / 0.1064;//Êµ²â0.1282*0.83
 //    Volage_AfterTransf = ((float)Voltage_BeforeTransf * 5.0 / 4096);
 
     WorkVoltageValue = Volage_AfterTransf;
