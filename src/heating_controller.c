@@ -250,28 +250,28 @@ void Temperature_Controller(void)		//ÎÂ¶È¿ØÖÆ
 		HeatingStart = 0;
 		if(ADtf_Value->VTempValue > 0.99 * PCLT->temper){
 			Temper.Kp = TemperKp[0];
-			HeatingTimer = 600;
+			HeatingTimer = 500;
 		}else if(ADtf_Value->VTempValue > 0.85 * PCLT->temper){
 			Temper.Kp = TemperKp[0];
 			HeatingTimer = 300;
 		}else if(ADtf_Value->VTempValue > 0.7 * PCLT->temper){
 			Temper.Kp = TemperKp[1];
-			HeatingTimer = 150;
+			HeatingTimer = 100;
 		}else{
 			Temper.Kp = TemperKp[1];
 			HeatingTimer = 0;
 		}
 	}
 
-	if(HeatingTimer < 150){
+	if(HeatingTimer < 100){
 		HeatingTimer++;
-		TCR = 0.4 + 3.0*HeatingTimer/1500;
+		TCR = 0.34 + 3.0*HeatingTimer/1000;
 	}else if(HeatingTimer < 300){
 		HeatingTimer++;
-		TCR = 0.55 + 3.0*HeatingTimer/3000;
-	}else if(HeatingTimer < 600){
+		TCR = 0.52 + 3.0*HeatingTimer/2500;
+	}else if(HeatingTimer < 500){
 		HeatingTimer++;
-		TCR = 0.7 + 3.0*HeatingTimer/6000;
+		TCR = 0.7 + 3.0*HeatingTimer/5000;
 	}else{
 		TCR = 1;
 	}
