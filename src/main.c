@@ -32,7 +32,7 @@ int main(void)
 	flash_manage_init();
 	Clock_init();
 	Can_Init();
-	CAN_DeclareAddress();
+
 	Filter_init();
 	sensor_init();
 	init_heating_module();
@@ -41,7 +41,7 @@ int main(void)
 	while(1)
 	{
 		heating_control();
-		CAN_control();//ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½
+		CAN_control();//¶ÔÉÏÎ»»ú·¢ËÍ½ÓÊÕ
 		Judge_WorkVoltage_loop();
 		flash_manage_loop();
 	}

@@ -1,15 +1,15 @@
 /*
  * common.h
  *
- *  Created on: 2019Äê7ÔÂ11ÈÕ
+ *  Created on: 2019é”Ÿæ–¤æ‹·7é”Ÿæ–¤æ‹·11é”Ÿæ–¤æ‹·
  *      Author: tianqingyuan
  */
+#ifndef COMMON_H_
+#define COMMON_H_
+
 #include "derivative.h"
 #include "config.h"
 #include "clock.h"
-
-#ifndef COMMON_H_
-#define COMMON_H_
 
 #ifndef FALSE
 #define FALSE	(0)
@@ -19,17 +19,17 @@
 #endif
 
 #ifdef DEBUG
-#define CLEAR() printf("\033[2J")					//ÇåÆÁ
+#define CLEAR() printf("\033[2J")					//é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
 #define MOVEUP(x) printf("\033[%dA", (x))
 #define MOVEDOWN(x) printf("\033[%dB", (x))
 #define MOVELEFT(y) printf("\033[%dD", (y))
 #define MOVERIGHT(y) printf("\033[%dC",(y))
-#define RESET_CURSOR() printf("\033[H")				//ÉèÖÃ£ºÖØÖÃ¹â±êÖÁÔ­µã
-#define MOVETO(x,y) printf("\033[%d;%dH", (x), (y))	//ÉèÖÃ£ºÒÆ¶¯¹â±êÖÁxĞĞyÁĞ
-#define CLEARLINE() printf("\033[K")				//ÉèÖÃ£ºÇå³ş´Ó¹â±êµ½ĞĞÎ²µÄ×Ö·û
-#define SAVEPOS() printf("\033[s")					//ÉèÖÃ£º±£´æ¹â±êÎ»ÖÃ
-#define LODEPOS() printf("\033[u")					//ÉèÖÃ£º»Ö¸´¹â±êÎ»ÖÃ
-#define RESET() printf("\033[0m")					//ÉèÖÃ£ºÇå³şËùÓĞÉèÖÃ
+#define RESET_CURSOR() printf("\033[H")				//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿæ–¤æ‹·é”ŸçŸ«ç™¸æ‹·é”Ÿæ–¤æ‹·é”Ÿçš†î…¨æ‹·é”Ÿï¿½
+#define MOVETO(x,y) printf("\033[%d;%dH", (x), (y))	//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿç‹¡è®¹æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿçµ°é”Ÿæ–¤æ‹·yé”Ÿæ–¤æ‹·
+#define CLEARLINE() printf("\033[K")				//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·åº¸é”Ÿç–¥åˆ°é”Ÿæ–¤æ‹·å°¾é”Ÿæ–¤æ‹·é”Ÿè¡—å‡¤æ‹·
+#define SAVEPOS() printf("\033[s")					//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·ä½é”Ÿæ–¤æ‹·
+#define LODEPOS() printf("\033[u")					//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿè¡—é©æ‹·é”Ÿæ–¤æ‹·é”Ÿè½¿ä¼™æ‹·é”Ÿï¿½
+#define RESET() printf("\033[0m")					//é”Ÿæ–¤æ‹·é”ŸçŸ«ï½æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿï¿½
 #else
 #define CLEAR()
 #define MOVEUP(x)
@@ -48,18 +48,34 @@
 #define myabs(a)	((a)<0?-(a):(a))
 #define range(a,x) ((a)<(-x)?(-x):((a)>(x)?(x):(a)))		//x>0
 
+typedef struct{
+	union{
+		struct{
+			uint8_t byte0Data;
+			uint8_t byte1Data;
+			uint8_t byte2Data;
+			uint8_t byte3Data;
+			uint8_t byte4Data;
+			uint8_t byte5Data;
+			uint8_t byte6Data;
+			uint8_t byte7Data;
+		}TxFrame;
+		uint8_t TxData[8];
+	};
+}GeneralTFrame_TypeDef;
+
 uint8_t Hysteresis_Comparator(int16_t input,int16_t lower,int16_t upper);
-void DelayUS(uint32_t u32TimeUS);		//×èÈûÑÓÊ±º¯Êı µ¥Î»£ºUS
-//void DelayMS(uint32_t u32TimeMS);		//×èÈûÑÓÊ±º¯Êı µ¥Î»£ºMS
-//void DelayS(uint32_t u32TimeS);  		//×èÈûÑÓÊ±º¯Êı µ¥Î»£ºS
+void DelayUS(uint32_t u32TimeUS);		//é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æ—¶é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹· é”Ÿæ–¤æ‹·ä½é”Ÿæ–¤æ‹·US
+//void DelayMS(uint32_t u32TimeMS);		//é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æ—¶é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹· é”Ÿæ–¤æ‹·ä½é”Ÿæ–¤æ‹·MS
+//void DelayS(uint32_t u32TimeS);  		//é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·æ—¶é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹· é”Ÿæ–¤æ‹·ä½é”Ÿæ–¤æ‹·S
 
 //#ifdef DEBUG
-void printstring(char* string);			//´®¿Ú´òÓ¡×Ö·û´®
-void printfloat(float value);			//´®¿Ú´òÓ¡¸¡µãÊı
+void printstring(char* string);			//é”Ÿæ–¤æ‹·é”ŸèŠ‚è¾¾æ‹·å°é”Ÿè¡—å‡¤æ‹·é”Ÿæ–¤æ‹·
+void printfloat(float value);			//é”Ÿæ–¤æ‹·é”ŸèŠ‚è¾¾æ‹·å°é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·
 void printHex(unsigned int val);
 //#endif
 
-void sysinit(void);				//ÏµÍ³³õÊ¼»¯	ÅäÖÃÆµÂÊºÍ´®¿Ú
+void sysinit(void);				//ç³»ç»Ÿé”Ÿæ–¤æ‹·å§‹é”Ÿæ–¤æ‹·	é”Ÿæ–¤æ‹·é”Ÿæ–¤æ‹·é¢‘é”Ÿç»å’Œè¾¾æ‹·é”Ÿæ–¤æ‹·
 void UART0_ISR(void);
 void Parse_UartCmd(void);
 

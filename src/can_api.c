@@ -168,7 +168,7 @@ void CAN_BusRecover(MSCAN_Type *pCANx)
 	static uint8_t CanErrorflag = 0;
 	static uint8_t CanErrorflagTime = 1;
 
-	if((pCANx->CANRFLG & MSCAN_CANRFLG_TSTAT_MASK) == MSCAN_CANRFLG_TSTAT_MASK){
+	if(((pCANx->CANRFLG & MSCAN_CANRFLG_TSTAT_MASK) >> 2) >= 1){
 		CanErrorflag = 1;
 
 	    sCAN_TxBuff.u8FreeLength = CAN_BUFFER_LENGTH;
@@ -185,7 +185,7 @@ void CAN_BusRecover(MSCAN_Type *pCANx)
 	}
 
 	if(CanErrorflag){
-		if(clock_time_exceed(CanErrorTime, 350)){
+		if(clock_time_exceed(CanErrorTime, 250)){
 			CanErrorflagTime = 1;
 			CanErrorflag = 0;
 

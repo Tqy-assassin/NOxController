@@ -1,7 +1,7 @@
 /*
  * heating_controller.c
  *
- *  Created on: 2021锟斤拷3锟斤拷31锟斤拷
+ *  Created on: 2021年3月31日
  *      Author: sunkaixiang
  */
 #include "heating_controller.h"
@@ -17,21 +17,21 @@
 #include "sensor_control.h"
 #include"Filter.h"
 static uint32_t Period100MSTimer = 0;
-#define PreHeat_Time	(10)	//????????  ??λ??s
-#define Max_preHeatTemp	(0.0800)//?????????????????????????????????????
+#define PreHeat_Time	(10)	//预加热时间  单位：s
+#define Max_preHeatTemp	(0.0800)//预加热最大温度，及若当温度大于该值则跳过预加热
 
-void Temperature_Controller(void);//??????
-//#define Min_Temp		(CLT_pointer()->temper - 0.01)	//??С???????
-#define Min_Temp		(CLT_pointer()->temper - 0.01)	//??С???????
-#define Max_Temp		(CLT_pointer()->temper + 0.01)	//????????
+void Temperature_Controller(void);//温度控制
+//#define Min_Temp		(CLT_pointer()->temper - 0.01)	//最小工作温度
+#define Min_Temp		(CLT_pointer()->temper - 0.01)	//最小工作温度
+#define Max_Temp		(CLT_pointer()->temper + 0.01)	//最大工作温度
 
-#define PWM_DC_STEP		0.5			//????	??????????
+#define PWM_DC_STEP		0.5			//最大步进	防止升温过快
 #define PWM_MaxValue	85
 #define PWM_MinValue	0
-#define TempStabilize_Time	(5)	//?????????  ??λ??s
+#define TempStabilize_Time	(5)	//温度稳定时间  单位：s
 
-float PWM_Duty_Cycle = 0;			//???PWM????
-uint8_t HeatingStart = 0;		//?????????? 1:true 0:false
+float PWM_Duty_Cycle = 0;			//当前PWM占空比
+uint8_t HeatingStart = 0;		//重新开始加热 1:true 0:false
 uint16_t HeatingTimer = 0;
 #ifdef TEMPERATURE_CONTROLLER
 SurveyVariate_Type Temper= {0};				//PWM -> temp
@@ -47,9 +47,9 @@ void init_heating_module()
 {
 	float Volage = get_WorkVoltage();
 	PWM_init();
-	CONFIG_PIN_AS_GPIO(PTH,PTH0,OUTPUT);	//????gpio??
+	CONFIG_PIN_AS_GPIO(PTH,PTH0,OUTPUT);	//配置gpio模式
 	set_PWM_Duty_Cycle(0);
-	//???????pid???
+	//设置温控pid系数
 	Temper.Kp = 360 / Volage;
 	TemperKp[0] = 360 / Volage;
 	//TemperKp[1] = 3*(360 / Volage);
@@ -116,17 +116,17 @@ void heating_control(void){
 	ADtfValue * ADtf_Value = get_ADtf_Value();
 	measureCoeffi_Typedef* PCLT = CLT_pointer();
 	float Volage = get_WorkVoltage();
-	if(clock_time_exceed(Period100MSTimer,100)){			//????????? T=100ms
+	if(clock_time_exceed(Period100MSTimer,100)){			//周期性事件 T=100ms
 		Period100MSTimer = Gets_Clock_value();
-		switch(get_working_stage()){				//?????????
+		switch(get_working_stage()){				//周期性发生
 			case STAGE_IDLE:
 			{
-				//??????????????????5??
+				//加热到指定温度后停止加热5秒
 				Status_HeaterOff();
 
 				if(!idle_stop_heat){
 					idle_time = Gets_Clock_value();
-					PWM_Duty_Cycle = 72 / Volage;//С?????
+					PWM_Duty_Cycle = 72 / Volage;//小预加热
 				}else{
 					PWM_Duty_Cycle = 0;
 					if(clock_time_exceed(idle_time,5000)){
@@ -175,7 +175,7 @@ void heating_control(void){
 
 				}
 
-				if(ADtf_Value->VTempValue > 0.7*PCLT->temper){//???趨????70%???PID????
+				if(ADtf_Value->VTempValue > 0.7*PCLT->temper){//到设定温度的70%后开始PID计算
 					perheatcount = 0;
 					PWM_Duty_Cycle = Pre_PWM_Duty[4];
 					set_working_stage(STAGE_HEATING);
@@ -235,7 +235,7 @@ void heating_control(void){
 }
 
 
-void Temperature_Controller(void)		//??????
+void Temperature_Controller(void)		//温度控制
 {
 #ifdef TEMPERATURE_CONTROLLER
 #if 1
@@ -293,7 +293,7 @@ void Temperature_Controller(void)		//??????
 
 	Temper.E_2 = Temper.E_1;
 	Temper.E_1 = Temper.E;
-	Temper.E = PCLT->temper*TCR - ADtf_Value->VTempValue;//?趨?-?????
+	Temper.E = PCLT->temper*TCR - ADtf_Value->VTempValue;//设定值-测量值
 	//Temper.E = PCLT->temper*TCR - KalmanADtf_Value->KalmanVTempValue;
 
 	if(myabs(Temper.E) > 0.0002){
@@ -348,7 +348,7 @@ void Temperature_Controller(void)		//??????
 		}
 	}
 #endif
-	if((ADtf_Value->VTempValue > Min_Temp) && (ADtf_Value->VTempValue < Max_Temp)){		//??????????????????????Χ??????
+	if((ADtf_Value->VTempValue > Min_Temp) && (ADtf_Value->VTempValue < Max_Temp)){		//当温度系数一定时间内保持在范围之内，则
 		if(Temper_stabilize > TempStabilize_Time * 10){
 			Status_AtTemperature();
 			set_working_stage(STAGE_ENVIRONMENT);

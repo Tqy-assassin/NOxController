@@ -1,10 +1,13 @@
 /*
- * vendor.c
+ * vendor_NTK.c
  *
- *  Created on: 2020��12��16��
- *      Author: tianqingyuan
+ *  Created on: 2022年1月29日
+ *      Author: LiquidSource
  */
 
+#include "config.h"
+#if VENDOR_ID == NTK_KIND
+#include "vendor_NTK.h"
 #include "vendor.h"
 #include "string.h"
 #include "gpio.h"
@@ -16,8 +19,6 @@
 #include "flash_manage.h"
 #include "common.h"
 
-#if VENDOR_ID != GWM_KIND
-
 uint32_t SourceAddr = 0;
 uint32_t TransmitData = 0;
 
@@ -27,8 +28,8 @@ extern uint32_t CAN_StartTimemr;
 extern uint8_t CAN_Start;
 
 extern uint32_t StartTimer;
-extern uint32_t CAN_StopTimemr;	//¶��ֹͣʱ��
-extern uint8_t CAN_Stop;			//¶��ֹͣ��ʶ
+extern uint32_t CAN_StopTimemr;	//露锟斤拷停止时锟斤拷
+extern uint8_t CAN_Stop;			//露锟斤拷停止锟斤拷识
 
 extern float Torque;
 extern float Speed;
@@ -41,29 +42,29 @@ extern uint32_t Start_Timer;
 
 int8_t RxPackflag = 0;
 
-#if VENDOR_ID == NTK_KIND
-J1939_SensorStatus	SensorStatus = {0};	//������״̬
+J1939_SensorStatus	SensorStatus = {0};	//锟斤拷锟斤拷锟斤拷状态
 void JudgeDeviceType(void)
 {
-#if defined(Default_SourceAddr)
-	SourceAddr = DefaultSourceAddr;
-#else
+//#if defined(Default_SourceAddr)
+#if NOXSOURCEADDR == NOXADDR_AUTO
 	CONFIG_PIN_AS_GPIO(PTA,PTA1,INPUT);
 	ENABLE_INPUT(PTA, PTA1);
 	if(READ_INPUT(PTA, PTA1) == 0){	//Default_SourceAddr
-		SourceAddr = SourceAddrATI1;//ǰ����1��PTA1�ӵ�
+		SourceAddr = SourceAddrATI1;//前锟斤拷锟斤拷1锟斤拷PTA1锟接碉拷
 	}else{
-		SourceAddr = SourceAddrATO1;//����1��PTA1�ߵ�ƽ
+		SourceAddr = SourceAddrATO1;//锟斤拷锟斤拷1锟斤拷PTA1锟竭碉拷平
 	}
+#else
+	SourceAddr = DefaultSourceAddr;
 #endif
 
-	if(SourceAddr == SourceAddrATI1){//ǰ����1
+	if(SourceAddr == SourceAddrATI1){//前锟斤拷锟斤拷1
 		TransmitData = TransmitDataATI1;
-	}else if(SourceAddr == SourceAddrATO1){//����1
+	}else if(SourceAddr == SourceAddrATO1){//锟斤拷锟斤拷1
 		TransmitData = TransmitDataATO1;
-	}else if(SourceAddr == SourceAddrATI2){//ǰ����2
+	}else if(SourceAddr == SourceAddrATI2){//前锟斤拷锟斤拷2
 		TransmitData = TransmitDataATI2;
-	}else if(SourceAddr == SourceAddrATO2){//����2
+	}else if(SourceAddr == SourceAddrATO2){//锟斤拷锟斤拷2
 		TransmitData = TransmitDataATO2;
 	}
 }
@@ -93,17 +94,17 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid)//data2
 	uint32_t timer;
 	uint8_t Status;
 	memset(&CTxFrame,0,8);
-	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //���ȼ�P3λ������λR1λ������ҳDP1λ��PGN��PF+PS��16λ��Դ��ַSA8λ
+	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //锟斤拷锟饺硷拷P3位锟斤拷锟斤拷锟斤拷位R1位锟斤拷锟斤拷锟斤拷页DP1位锟斤拷PGN锟斤拷PF+PS锟斤拷16位锟斤拷源锟斤拷址SA8位
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
 	sTxFrameInfo.u8BPR = 0x10;
 
-	HeaterRatio = 1;//1
-	NOx_corr_gain = 0;//0 = x *0.1% -100
-	NOx_corr_off = 0;//125
-	OperationHoursCounter = get_new_run_time()/3600;//runtime (h)
-	//����
+	HeaterRatio = 1/0.001;
+	NOx_corr_gain = (0+100)/0.1;
+	NOx_corr_off = (0+125)/1;
+	OperationHoursCounter = get_new_run_time()/3600/1;//runtime (h)
+	//锟斤拷锟斤拷
 	CTxFrame.TxFrame.HeaterRatio_L = HeaterRatio & 0xFF;
 	CTxFrame.TxFrame.HeaterRatio_H = HeaterRatio>>8 & 0xFF;
 	CTxFrame.TxFrame.NOx_corr_gain_L = NOx_corr_gain & 0xFF;
@@ -111,7 +112,7 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid)//data2
 	CTxFrame.TxFrame.NOx_corr_off = NOx_corr_off;
 	CTxFrame.TxFrame.OperationHoursCounter_L = OperationHoursCounter & 0xFF;
 	CTxFrame.TxFrame.OperationHoursCounter_H = OperationHoursCounter>>8 & 0xFF;
-
+	//CTxFrame.TxFrame.Noused = 0xFF;
 
 	memcpy(sTxFrameInfo.u8DataBuff, CTxFrame.TxData, 8);
 	timer = Gets_Clock_value();
@@ -127,22 +128,22 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid)//data2
 
 void CAN_DeclareAddress()
 {
-	//DelayUS(100*1000);
-	uint32_t timer;
-	uint8_t Status;
+	DelayUS(10000);
+	//uint32_t timer;
+	//uint8_t Status;
 	uint16_t cmd = 0xEEFF;
 
 	ItemInfoType sTxFrameInfo;
 	GeneralTFrame_TypeDef CTxFrame;
 	memset(&CTxFrame,0,8);
 	//3+1+1+16+8 = 29
-	sTxFrameInfo.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //���ȼ�P3λ������λR1λ������ҳDP1λ��PGN��PF+PS��16λ��Դ��ַSA8λ
+	sTxFrameInfo.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //锟斤拷锟饺硷拷P3位锟斤拷锟斤拷锟斤拷位R1位锟斤拷锟斤拷锟斤拷页DP1位锟斤拷PGN锟斤拷PF+PS锟斤拷16位锟斤拷源锟斤拷址SA8位
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
 	sTxFrameInfo.u8BPR = 0x10;
 
-	//����  data
+	//锟斤拷锟斤拷  data
 	CTxFrame.TxFrame.byte0Data = 0x80;
 	if(SourceAddr == SourceAddrATI1){
 		CTxFrame.TxFrame.byte1Data = 0x11;
@@ -158,8 +159,8 @@ void CAN_DeclareAddress()
 	CTxFrame.TxFrame.byte7Data = 0x01;
 
 	memcpy(sTxFrameInfo.u8DataBuff, CTxFrame.TxData, 8);
-	//CAN_TransmitItemByInt(MSCAN,&sTxFrameInfo,&sCAN_TxBuff);
-
+	CAN_TransmitItemByInt(MSCAN,&sTxFrameInfo,&sCAN_TxBuff);
+	/*
 	timer = Gets_Clock_value();
 	do{
 		Status = CAN_TransmitItemByInt(MSCAN,&sTxFrameInfo,&sCAN_TxBuff);
@@ -167,8 +168,8 @@ void CAN_DeclareAddress()
 			break;
 		}
 	}while(!Status);
-
-	DelayUS(250*1000);
+	 */
+	DelayUS(10000);
 }
 
 
@@ -196,20 +197,18 @@ void CAN_CorrectO2NOx_Transmit(uint16_t cmdid)//data3
 	uint8_t Status;
 	memset(&CTxFrame,0,8);
 	//3+1+1+16+8 = 29
-	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //���ȼ�P3λ������λR1λ������ҳDP1λ��PGN��PF+PS��16λ��Դ��ַSA8λ
+	sTxFrameInfo.ID_Type.ID = PDU_P(3) | PDU_R(0) | PDU_DP(0) | PDU_PGN(cmd) | PDU_SA(SourceAddr);//CFD 1051  //锟斤拷锟饺硷拷P3位锟斤拷锟斤拷锟斤拷位R1位锟斤拷锟斤拷锟斤拷页DP1位锟斤拷PGN锟斤拷PF+PS锟斤拷16位锟斤拷源锟斤拷址SA8位
 	sTxFrameInfo.bIsExtOrStand = 1;
 	sTxFrameInfo.bIsRemoteFrame = 0;
 	sTxFrameInfo.u32DataLength = 8;
 	sTxFrameInfo.u8BPR = 0x10;
 
-	//����  data
-	CTxFrame.TxFrame.SelfDiagnosisResultValue = 100;
-	CTxFrame.TxFrame.NH3Correction = 0;
-	CTxFrame.TxFrame.NO2Correction = 170; 			//0.85�̶�
-//	CTxFrame.TxFrame.CorrectPressureLambda = 72;	//0.36 ��ѹ������ϵ��
-//	CTxFrame.TxFrame.CorrectPressureNOx = 22;		//0.11 ����ѹ������ϵ��
-	CTxFrame.TxFrame.CorrectPressureLambda = (PCoe->O2_Pressure)/0.5;		//��ѹ������ϵ��
-	CTxFrame.TxFrame.CorrectPressureNOx = (PCoe->NOx_Pressure)/0.5;		//����ѹ������ϵ��
+	//锟斤拷锟斤拷  data
+	CTxFrame.TxFrame.SelfDiagnosisResultValue = 100/1;
+	CTxFrame.TxFrame.NH3Correction = 0/0.005;
+	CTxFrame.TxFrame.NO2Correction = 0.85/0.005;
+	CTxFrame.TxFrame.CorrectPressureLambda = (PCoe->O2_Pressure)/0.005;		//锟斤拷压锟斤拷锟斤拷锟斤拷系锟斤拷0.36
+	CTxFrame.TxFrame.CorrectPressureNOx = (PCoe->NOx_Pressure)/0.005;		//锟斤拷锟斤拷压锟斤拷锟斤拷锟斤拷系锟斤拷0.11
 
 	memcpy(sTxFrameInfo.u8DataBuff, CTxFrame.TxData, 8);
 
@@ -225,7 +224,7 @@ void CAN_CorrectO2NOx_Transmit(uint16_t cmdid)//data3
 void CAN_TriggerSelfDiagnosis(uint16_t cmdid,CANRxFrameDataType* RxFrame){
 
 	if(CAN_Start){
-		if(!clock_time_exceed(Start_Timer,120 * 1000)){			//���Ⱥ�120s��
+		if(!clock_time_exceed(Start_Timer,120 * 1000)){			//锟斤拷锟饺猴拷120s锟斤拷
 			if( (cmdid == TransmitDataATI1)||\
 				(cmdid == TransmitDataATO1)||\
 				(cmdid == TransmitDataATI2)||\
@@ -239,12 +238,12 @@ void CAN_TriggerSelfDiagnosis(uint16_t cmdid,CANRxFrameDataType* RxFrame){
 					default:  break;
 				}
 				if((temp <= 4) && (temp >= 1))
-					TriggerSelfDiagnosis = 1;//�����ģʽ����?
+					TriggerSelfDiagnosis = 1;//锟斤拷锟斤拷锟侥Ｊ斤拷锟斤拷锟�
 				else
-					TriggerSelfDiagnosis = 0;//�����ģʽ�ر�?
+					TriggerSelfDiagnosis = 0;//锟斤拷锟斤拷锟侥Ｊ斤拷乇锟�
 			}
 		}else{
-			TriggerSelfDiagnosis = 0;//�����ģʽ�ر�?
+			TriggerSelfDiagnosis = 0;//锟斤拷锟斤拷锟侥Ｊ斤拷乇锟�
 		}
 	}
 }
@@ -440,7 +439,7 @@ void CAN_TxTask(void)
 		TxFrame.TxFrame.ErrorO2 = (SensorStatus.O2Error) ? (SensorStatus.O2Error > 1 ? OpenWire : ShortCircuit) : NoError;
 
 
-		if(TriggerSelfDiagnosis){//�����?
+		if(TriggerSelfDiagnosis){//锟斤拷锟斤拷锟�
 			if(workingstage == STAGE_ENVIRONMENT){
 				TxFrame.TxFrame.Diagnosisfeedback = 2;
 			}
@@ -469,10 +468,10 @@ void CAN_TxTask(void)
 		*/
 	}
 
-	sTxFrame.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(TransmitData) | PDU_SA(SourceAddr);//���ȼ�P3λ������λR1λ������ҳDP1λ��PGN��PF+PS��16λ��Դ��ַSA8λ
-	sTxFrame.bIsExtOrStand = 1;//��չ֡
-	sTxFrame.bIsRemoteFrame = 0;//��Զ��֡��������֡
-	sTxFrame.u32DataLength = 8;//���ݳ���8�ֽ�
+	sTxFrame.ID_Type.ID = PDU_P(6) | PDU_R(0) | PDU_DP(0) | PDU_PGN(TransmitData) | PDU_SA(SourceAddr);//锟斤拷锟饺硷拷P3位锟斤拷锟斤拷锟斤拷位R1位锟斤拷锟斤拷锟斤拷页DP1位锟斤拷PGN锟斤拷PF+PS锟斤拷16位锟斤拷源锟斤拷址SA8位
+	sTxFrame.bIsExtOrStand = 1;//锟斤拷展帧
+	sTxFrame.bIsRemoteFrame = 0;//锟斤拷远锟斤拷帧锟斤拷锟斤拷锟斤拷锟斤拷帧
+	sTxFrame.u32DataLength = 8;//锟斤拷锟捷筹拷锟斤拷8锟街斤拷
 	sTxFrame.u8BPR = 0x10;
 	memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
 	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
@@ -521,90 +520,6 @@ uint8_t Status_Get(void){
 	return Status.byte;
 }
 
-#elif VENDOR_ID == BENZ_KIND
-void JudgeDeviceType(void)
-{
-#if defined(Default_SourceAddr)
-	SourceAddr = DefaultSourceAddr;
-#else
-	CONFIG_PIN_AS_GPIO(PTA,PTA1,INPUT);
-	ENABLE_INPUT(PTA, PTA1);
-	if(READ_INPUT(PTA, PTA1) == 0){	//Default_SourceAddr
-		SourceAddr = DefaultSourceAddr;
-	}else{
-		SourceAddr = DefaultSourceAddr;
-	}
-#endif
-	TransmitData = TransmitDataATI1;
-}
-uint8_t JudgeDewPointStart(CANRxFrameDataType* RxFrame)
-{
-	if((RxFrame->RxFrame.startCode.AfterTreatment1IntakeGas == DewPointReached)){
-		return DewPoint_Start;
-	}else{
-		return DewPoint_Stop;
-	}
-}
-const uint8_t TxMsg0Bit[] = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13};
-const uint8_t TxMsg1Bit[] = {0x30,0x30,0x30,0x39,0x30,0x35,0x33,0x35,0x30,0x33,0x32,0x39,0x30,0x30,0x31,0x31,0xA6,0x88,0x38,0x1D};
-extern ASIC_Stage ASIC_FLAG;
-void CAN_TxTask(void){
-	TramsmitFrame_TypeDef TxFrame;
-	ItemInfoType sTxFrame;
-	uint16_t O2, NOx;
-	static uint8_t Count = 0;
-	static uint8_t MsgNum = 0;
-
-	O2 = (int)((21 - get_O2C()) / 0.021);
-	NOx = (int)(get_NOxC());
-	memset(TxFrame.TxData, 0, 8);
-	TxFrame.TxFrame.NOx[0] = (NOx >> 8) & 0xFF;
-	TxFrame.TxFrame.NOx[1] = (NOx >> 0) & 0xFF;
-	TxFrame.TxFrame.O2[0] = (O2 >> 8) & 0xFF;
-	TxFrame.TxFrame.O2[1] = (O2 >> 0) & 0xFF;
-	TxFrame.TxFrame.UNKnow[0] = 0;
-	TxFrame.TxFrame.UNKnow[1] = 0;
-	if(ASIC_FLAG == ENVIRONMENT){
-		TxFrame.TxFrame.Status = 0x1E;
-	}else{
-		TxFrame.TxFrame.Status = 0x00;
-	}
-	sTxFrame.ID_Type.ID = TransmitData;
-	sTxFrame.bIsExtOrStand = 0;
-	sTxFrame.bIsRemoteFrame = 0;
-	sTxFrame.u32DataLength = 8;
-	sTxFrame.u8BPR = 0x10;
-	memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
-	Count++;
-	if(Count == 10){
-		Count = 0;
-
-		TxFrame.TxData[0] = TxMsg0Bit[MsgNum];
-		TxFrame.TxData[1] = TxMsg1Bit[MsgNum];
-		TxFrame.TxData[2] = 0;
-		TxFrame.TxData[3] = 0;
-		TxFrame.TxData[4] = 0;
-		TxFrame.TxData[5] = 0;
-		TxFrame.TxData[6] = 0;
-		TxFrame.TxData[7] = 0;
-
-		sTxFrame.ID_Type.ID = TransmitMessage;
-		sTxFrame.bIsExtOrStand = 0;
-		sTxFrame.bIsRemoteFrame = 0;
-		sTxFrame.u32DataLength = 8;
-		sTxFrame.u8BPR = 0x10;
-		memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
-		CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
-		MsgNum++;
-		MsgNum %= sizeof(TxMsg0Bit);
-	}
-}
-
-#endif
-
-
-#if VENDOR_ID == NTK_KIND
 void InspectResultAnalysis(uint8_t* InspectResult)
 {
 	IpValue * Ip = get_Ip_Value();
@@ -618,9 +533,9 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 
 	for(i = 0;i<5;i++){
 		if(Rx_Buf[i] == NormalValue[i]){
-			Status &= ~(1<<i);//��������һλΪ0
+			Status &= ~(1<<i);//锟斤拷锟斤拷锟斤拷锟斤拷一位为0
 		}else{
-			Status |= 1<<i;//��������һλΪ1
+			Status |= 1<<i;//锟斤拷锟斤拷锟斤拷锟斤拷一位为1
 		}
 	}
 
@@ -702,57 +617,4 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 		}
 	}
 }
-#elif VENDOR_ID == BENZ_KIND
-void InspectResultAnalysis(uint8_t* InspectResult)
-{
-	static float buf[3];
-	static int count = 0;
-	uint32_t Status = 0;
-	const uint8_t NormalValue[] = {0x08,0x00,0x00,0x00,0x80};
-	int i;
-	uint8_t Rx_Buf[5];
-	memcpy(Rx_Buf,InspectResult,5);
-
-	for(i = 0;i<5;i++){
-		if(Rx_Buf[i] == NormalValue[i]){
-			Status &= ~(1<<i);
-		}else{
-			Status |= 1<<i;
-		}
-	}
-
-	if(Status > 1){
-		if(ASIC_FLAG != IDLE && ASIC_FLAG != InspectError){
-			if(count > 200){
-#ifdef UART_CONTROL
-				SAVEPOS();
-				MOVETO(16,0);
-				printf("Error: 0x%02X 0x%02X 0x%02X 0x%02X",Rx_Buf[1],Rx_Buf[2],Rx_Buf[3],Rx_Buf[4]);
-				LODEPOS();
-#endif
-				PreASIC_Stage = ASIC_FLAG;
-				ASIC_FLAG = InspectError;
-				buf[0] = Ip_Value.Ip0_Value;
-				buf[1] = Ip_Value.Ip1_Value;
-				buf[2] = Ip_Value.Ip2_Value;
-				Ip_Value.Ip0_Value = Ip_Value.Ip1_Value = Ip_Value.Ip2_Value = 0;
-			}else{
-				count++;
-			}
-		}
-	}else{
-		if(count == 0){
-			if(ASIC_FLAG == InspectError){
-				ASIC_FLAG = PreASIC_Stage;
-				PreASIC_Stage = IDLE;
-				Ip_Value.Ip0_Value = buf[0];
-				Ip_Value.Ip1_Value = buf[1];
-				Ip_Value.Ip2_Value = buf[2];
-			}
-		}else if(count > 0){
-			count --;
-		}
-	}
-}
-#endif
-#endif
+#endif /* VENDOR_ID == NTK_KIND */

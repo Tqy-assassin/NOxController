@@ -1,13 +1,14 @@
 /*
- * gwm_vendor.c
+ * YUC_Y24.c
  *
- *  Created on: 2021骞�12鏈�15鏃�
+ *  Created on: 2022骞�1鏈�19鏃�
  *      Author: Administrator
  */
 
 #include "config.h"
-#if VENDOR_ID == GWM_KIND
-#include "gwm_vendor.h"
+
+#if VENDOR_ID == YUC_Y24
+#include "YUC_Y24.h"
 #include "string.h"
 #include "gpio.h"
 #include "device_state_manger.h"
@@ -17,6 +18,7 @@
 #include <string.h>
 #include "flash_manage.h"
 #include "common.h"
+#include "power_manage.h"
 
 uint32_t SourceAddr = 0;
 uint32_t TransmitData = 0;
@@ -40,11 +42,18 @@ extern uint8_t NoPIDflag;
 extern uint32_t Start_Timer;
 int8_t RxPackflag = 0;
 
-static uint32_t TransmitParameterCorrection1Address = 0;
-static uint32_t TransmitParameterCorrection2Address = 0;
-static ErrorState errorState = {
-		.StateDate = 0
+static uint32_t TransmitParameterCorrectionAddress = 0;
+static Error_t errorByte = {
+		.byte = 0
 };
+static Status_t statusByte = {
+		.byte = 0x40
+};
+
+void StatusPowerHasProblem(uint8_t err)
+{
+	statusByte.bits.SensorSupply = err != 0 ? 1 : 0;
+}
 
 
 void JudgeDeviceType(void)
@@ -63,12 +72,12 @@ void JudgeDeviceType(void)
 
 	if(SourceAddr == DeviceType_Intake){
 		TransmitData = IntakeTransmitData;
-        TransmitParameterCorrection1Address = IntakeTransmitParameterCorrection1;
-        TransmitParameterCorrection2Address = IntakeTransmitParameterCorrection2;
+        TransmitParameterCorrectionAddress = IntakeTransmitParameterCorrection;
 	}else if(SourceAddr == DeviceType_Outlet){
 		TransmitData = OutletTransmitData;
-        TransmitParameterCorrection1Address = OutletTransmitParameterCorrection1;
-        TransmitParameterCorrection2Address = OutletTransmitParameterCorrection2;
+        TransmitParameterCorrectionAddress = OutletTransmitParameterCorrection;
+	}else{
+
 	}
 }
 
@@ -94,72 +103,104 @@ void CAN_RxTask(uint32_t CAN_ID, CANRxFrameDataType* RxFrame)
             CAN_StopTimemr = Gets_Clock_value();
             CAN_Stop = 1;
         }
+        if(RxFrame->Frame.code.Request1){
+        	//TODO: 后NOx传感器ID反馈1
+        	//需求待输入
+        }
+        if(RxFrame->Frame.code.Request2){
+        	//TODO: 后NOx传感器ID反馈2
+        	//需求待输入
+        }
     }
 }
-const uint8_t TxMsg0Bit[] = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11,0x12,0x13};
-const uint8_t TxMsg1Bit[] = {0x30,0x36,0x31,0x36,0x30,0x35,0x30,0x2D,0x46,0x44,0x32,0x39,0x30,0x30,0x34,0x33,0x3D,0x79,0x48,0xA8};
+
+#define RangeAssignment(x, a, b)	((x) >= (a) ? ((x) <= (b) ? (x) : (b)) : (a))
 void CAN_TxTask()
 {
+
     static int count = 0;
     static int TxMsgCount = 0;
     ItemInfoType sTxFrame;
 	CANTxDateFrame TxFrame;
 
-	if(CAN_Start){
+    if(CAN_Start){
         ADtfValue * ADtf_Value;
         ADtf_Value = get_ADtf_Value();
-        TxFrame.Frame.NOx = get_NOxC() * 8.9296875;
-        TxFrame.Frame.O2 = 21-get_O2C() / 0.021;
+//          TxFrame.Frame.NOx = get_NOxC() * 8.9296875;
+//          TxFrame.Frame.O2 = 21-get_O2C() / 0.021;
+        TxFrame.Frame.NOx = RangeAssignment(get_NOxC() * 0.1, -100, 1650);
+        TxFrame.Frame.O2 = RangeAssignment(get_O2C(), -200, 1540);
         TxFrame.Frame.Vp0 = ADtf_Value->Vref0Value * 100000;
-        TxFrame.Frame.Rst = 30;
-        TxFrame.Frame.Error = errorState;
-	}else{
-		static int CAN_StartCount = 0;
-        switch(CAN_StartCount){
-            case 0:
-            {
-                uint8_t TxData[] = {0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x40, 0x00};
-                memcpy(TxFrame.TxData, TxData, 8);
-                CAN_StartCount = 1;
-                break;
-            }
+        TxFrame.Frame.Status = statusByte;
+        TxFrame.Frame.Error = errorByte;
+
+        sTxFrame.ID_Type.ID = TransmitData;
+        sTxFrame.bIsExtOrStand = 0;
+        sTxFrame.bIsRemoteFrame = 0;
+        sTxFrame.u32DataLength = 8;
+        sTxFrame.u8BPR = 0x10;
+        memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
+        CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+    }else{
+        static uint8_t DataModeSwitch = 1;
+        //XXX:data2 data3 所有数据具体待确认，暂时使用GWM的数据
+        switch(DataModeSwitch){ 
             case 1:
             {
-                static uint8_t unknowncount = 0xFF;
-                uint8_t TxData[] = {0x03, 0xDC, 0x0A, unknowncount, 0x02, 0x0E, 0x0A, 0x1B};
-                memcpy(TxFrame.TxData, TxData, 8);
-                unknowncount--;
-                CAN_StartCount = 2;
+                TxFrame.Frame.NOx = 0xFFFF;
+                TxFrame.Frame.O2 = 0xFFFF;
+                TxFrame.Frame.Vp0 = 0xFFFF;
+                TxFrame.Frame.Status.byte = 0x40;
+                TxFrame.Frame.Error = errorByte;
+                DataModeSwitch = 2;
                 break;
             }
             case 2:
             {
-                uint8_t TxData[] = {0x00, 0x00, 0x00, 0x00, 0xA5, 0xD2, 0x0C, 0x00};
+                const uint8_t TxData[] = {0x03, 0xDC, 0x0A, 0x00, 0x02, 0x0E, 0x0A, 0x1B};
+                static uint8_t unknowncount = 0xFF;
                 memcpy(TxFrame.TxData, TxData, 8);
-                CAN_StartCount = 0;
+                TxFrame.TxData[3] = unknowncount;
+                unknowncount--;
+                DataModeSwitch = 3;
+                break;
+            }
+            case 3:
+            {
+                const uint8_t TxData[] = {0x00, 0x00, 0x00, 0x00, 0xA5, 0xD2, 0x0C, 0x00};
+                memcpy(TxFrame.TxData, TxData, 8);
+                DataModeSwitch = 1;
                 break;
             }
         }
-	}
 
-	sTxFrame.ID_Type.ID = TransmitData;
-	sTxFrame.bIsExtOrStand = 0;
-	sTxFrame.bIsRemoteFrame = 0;
-	sTxFrame.u32DataLength = 8;
-	sTxFrame.u8BPR = 0x10;
-	memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
-	CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+        sTxFrame.ID_Type.ID = TransmitData;
+        sTxFrame.bIsExtOrStand = 0;
+        sTxFrame.bIsRemoteFrame = 0;
+        sTxFrame.u32DataLength = 8;
+        sTxFrame.u8BPR = 0x10;
+        memcpy(sTxFrame.u8DataBuff,TxFrame.TxData,8);
+        CAN_TransmitItemByInt(MSCAN,&sTxFrame,&sCAN_TxBuff);
+    }
+
+    //TODO mode3 mode4 内容待确定
 
 
     count++;
     if(count >= 10){
+        const uint8_t CAL_ID[16] = {"4A800_345_290009"};
+        uint8_t CVN[4] = {0, 0, 0, 0};
         count = 0;
         memset(sTxFrame.u8DataBuff,0,8);
-        sTxFrame.u8DataBuff[0] = TxMsg0Bit[TxMsgCount];
-        sTxFrame.u8DataBuff[1] = TxMsg1Bit[TxMsgCount];
+        sTxFrame.u8DataBuff[0] = TxMsgCount;
+        if(TxMsgCount < 16){
+            sTxFrame.u8DataBuff[1] = CAL_ID[TxMsgCount];
+        }else{
+            sTxFrame.u8DataBuff[1] = CVN[TxMsgCount-16];
+        }
         TxMsgCount = (TxMsgCount + 1) % 20;
 
-        sTxFrame.ID_Type.ID = TransmitParameterCorrection1Address;
+        sTxFrame.ID_Type.ID = TransmitParameterCorrectionAddress;
         sTxFrame.bIsExtOrStand = 0;
         sTxFrame.bIsRemoteFrame = 0;
         sTxFrame.u32DataLength = 8;
@@ -169,43 +210,39 @@ void CAN_TxTask()
 }
 
 void Status_HeaterOff(void){
-    errorState.State.HeaterSC = 1;
+
 }
 void Status_PreHeater(void){
-	errorState.State.HeaterSC = 1;
+
 }
 void Status_Heating(void){
-	errorState.State.HeaterSC = 1;
+
 }
 void Status_HeatCriticalPoint(void){
-	errorState.State.HeaterSC = 1;
+
 }
 void Status_AutomaticHeat(void){
-	
+
 }
 void Status_AtTemperature(void){
-	errorState.State.HeaterOC = 0;
-    errorState.State.HeaterSC = 0;
+	statusByte.bits.HeaterTemperature = 1;
 }
 void Status_nAtTemperature(void){
-	errorState.State.HeaterOC = 1;
+	statusByte.bits.HeaterTemperature = 0;
 }
 void Status_NOxValid(void){
-    errorState.State.NOxOC = 0;
-    errorState.State.NOxSC = 0;
+    statusByte.bits.NOxSignal = 1;
 }
 void Status_NOxnValid(void){
-	errorState.State.NOxOC = 1;
+    statusByte.bits.NOxSignal = 0;
 }
 void Status_O2Valid(void){
-	errorState.State.O2OC = 0;
-    errorState.State.O2SC = 0;
-    errorState.State.Vp0OC = 0;
-    errorState.State.Vp0SC = 0;
+	statusByte.bits.LamdaLinearSignal = 1;
+	statusByte.bits.LamdaBinarySignal = 1;
 }
 void Status_O2nValid(void){
-	errorState.State.O2OC = 1;
-    errorState.State.Vp0OC = 1;
+	statusByte.bits.LamdaLinearSignal = 0;
+	statusByte.bits.LamdaBinarySignal = 0;
 }
 
 void InspectResultAnalysis(uint8_t* InspectResult)
@@ -224,6 +261,45 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 			Status &= ~(1<<i);
 		}else{
 			Status |= 1<<i;
+		}
+	}
+	if(Rx_Buf[1] == 0x00){
+		errorByte.bits.HeaterOC = 0;
+		errorByte.bits.HeaterSC = 0;
+	}else{
+		if(Rx_Buf[3] | (1 << 5)){
+			errorByte.bits.HeaterSC = 1;
+		}
+		if(Rx_Buf[4] | (1 << 5)){
+			errorByte.bits.HeaterOC = 0;
+		}
+	}
+
+	if(Rx_Buf[2] & ~(1 << 6)){
+		errorByte.bits.O2OC = 0;
+		errorByte.bits.O2SC = 0;
+		errorByte.bits.Vp0OC = 0;
+		errorByte.bits.Vp0SC = 0;
+	}else{
+		if(Rx_Buf[3] | (1 << 4)){
+			errorByte.bits.O2SC = 1;
+			errorByte.bits.Vp0SC = 1;
+		}
+		if(Rx_Buf[4] | (1 << 4)){
+			errorByte.bits.O2OC = 0;
+			errorByte.bits.Vp0OC = 0;
+		}
+	}
+
+	if(Rx_Buf[2] & ~(1 << 5)){
+		errorByte.bits.NOxOC = 0;
+		errorByte.bits.NOxSC = 0;
+	}else{
+		if(Rx_Buf[3] | (1 << 4)){
+			errorByte.bits.NOxSC = 1;
+		}
+		if(Rx_Buf[4] | (1 << 4)){
+			errorByte.bits.NOxOC = 0;
 		}
 	}
 
@@ -259,6 +335,7 @@ void InspectResultAnalysis(uint8_t* InspectResult)
 	}
 }
 uint8_t Status_Get(void){
-	return errorState.StateDate;
+	return errorByte.byte;
 }
 #endif
+

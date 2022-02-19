@@ -1,15 +1,15 @@
 /*
- * gwm_vendor.h
+ * YUC_Y24.h
  *
- *  Created on: 2021��12��15��
+ *  Created on: 2022年1月19日
  *      Author: Administrator
  */
 
-#ifndef GWM_VENDOR_H_
-#define GWM_VENDOR_H_
+#ifndef YUC_Y24_H_
+#define YUC_Y24_H_
 
 #include "config.h"
-#if VENDOR_ID == GWM_KIND
+#if VENDOR_ID == YUC_Y24
 #include "common.h"
 #include "can_api.h"
 
@@ -20,24 +20,23 @@ enum{
     DeviceType_Outlet = 0,
     DeviceType_Intake = 1
 }DeviceType;
+#define DefaultSourceAddr DeviceType_Outlet
 
 enum{
-    OutletTransmitData                 = 0x1FA,
-    OutletTransmitParameterCorrection1  = 0x1FB,
-    OutletTransmitParameterCorrection2  = 0x1FB,
-	IntakeTransmitData                   = 0x1FC,
-    IntakeTransmitParameterCorrection1    = 0x1FD,
-    IntakeTransmitParameterCorrection2    = 0x1FD,
+	OutletReceiveSignal                  = 0x1F1,
+    OutletTransmitData                   = 0x1FA,
+    OutletTransmitParameterCorrection    = 0x1FB, 
 
-	OutletReceiveSignal     = 0x1F1,
-	IntakeReceiveSignal   = 0x1F2,	//
+	IntakeReceiveSignal                  = 0x1F2,
+	IntakeTransmitData                   = 0x1FC,
+    IntakeTransmitParameterCorrection    = 0x1FD,
 
 	PrivateCmd_Intake = 0x5A99,
 	PrivateCmd_Outlet = 0x99A5,
 }CAN_PGN;
 
 typedef union{
-	uint8_t StateDate;
+	uint8_t byte;
 	struct{
 		uint8_t HeaterOC :1;
 		uint8_t NOxOC :1;
@@ -47,16 +46,38 @@ typedef union{
 		uint8_t NOxSC :1;
 		uint8_t O2SC :1;
 		uint8_t Vp0SC :1;
-	}State;
-}ErrorState;
+	}bits;
+}Error_t;
+
+enum DewPointReachedIdentification{
+	NormalMode = 0,
+	WatingForDewPoint = 1,
+	TransmitInitData = 2,
+	DataPart1AfterSignal = 4,
+	DataPart2AfterSignal = 5,
+	DataPart1BeforeSignal = 6,
+	DataPart2BeforeSignal = 7,
+};
+
+typedef union{
+	uint8_t byte;
+	struct{
+		uint8_t SensorSupply :1;
+		uint8_t HeaterTemperature :1;
+		uint8_t LamdaBinarySignal :1;
+		uint8_t LamdaLinearSignal :1;
+		uint8_t NOxSignal :1;
+		uint8_t ExternMode :3;
+	}bits;
+}Status_t;
 
 typedef union{
     struct{
         int16_t NOx;
         int16_t O2;
         int16_t Vp0;
-        uint8_t Rst;
-        ErrorState Error;
+        Status_t Status;
+        Error_t Error;
     }Frame;
     uint8_t TxData[8];
 }CANTxDateFrame;
@@ -92,9 +113,9 @@ typedef union{
         struct 
         {
             uint8_t bit0 :1;
-            uint8_t Request2 :1;
-            uint8_t bit2 :1;
             uint8_t Request1 :1;
+            uint8_t bit2 :1;
+            uint8_t Request2 :1;
             uint8_t bit4 :1;
             uint8_t bit5 :1;
             uint8_t bit6 :1;
@@ -111,7 +132,6 @@ typedef union{
     uint8_t RxData[8];
 }CANRxFrameDataType;
 
-
 void CAN_RxTask(uint32_t CAN_ID, CANRxFrameDataType* RxFrame);
 void InspectResultAnalysis(uint8_t* InspectResult);
 void JudgeDeviceType(void);
@@ -121,6 +141,7 @@ float getSpeed(CANRxFrameDataType* RxFrame);
 float getSpeedAdjust(CANRxFrameDataType* RxFrame);
 float getTorqueLosses(CANRxFrameDataType* RxFrame);
 float getGasMassFlow(CANRxFrameDataType* RxFrame);
+void StatusPowerHasProblem(uint8_t err);
 void Status_HeaterOff(void);
 void Status_PreHeater(void);
 void Status_Heating(void);
@@ -138,5 +159,5 @@ void CAN_Heaterratio_deviation_Transmit(uint16_t cmdid);
 #define CAN_RxManyPostback()
 #define CAN_DeclareAddress()
 
-#endif /* VENDOR_ID == GWM_KIND */
-#endif /* GWM_VENDOR_H_ */
+#endif /* #if VENDOR_ID == YUC_Y24 */
+#endif /* YUC_Y24_H_ */

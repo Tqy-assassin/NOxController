@@ -9,13 +9,16 @@
 #include "adc.h"
 #include <string.h>
 #include "clock.h"
+#include "common.h"
 
 float WorkVoltageValue = 0;
 uint32_t Period60STimer = 0;
 float get_WorkVoltage(void){
 	return WorkVoltageValue;
 }
-
+#if VENDOR_ID == YUC_Y24
+extern void StatusPowerHasProblem(uint8_t err);
+#endif
 void Judge_WorkVoltage(void)
 {
 #ifdef VOLTAGE_COMPATIBILITY
@@ -46,6 +49,13 @@ void Judge_WorkVoltage(void)
 #endif
 #ifdef DEBUG
 //	printf("WorkVoltage = %dV\n", (int)WorkVoltageValue);
+#endif
+#if VENDOR_ID == YUC_Y24
+    if(WorkVoltageValue >= 36 || WorkVoltageValue <= 9){
+    	StatusPowerHasProblem(1);
+    }else{
+    	StatusPowerHasProblem(0);
+    }
 #endif
 }
 
