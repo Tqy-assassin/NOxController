@@ -17,7 +17,7 @@
 #define NOXSOURCEADDR				NOXADDR_AUTO 			//Sensor address----NOXADDR_AUTO:Automatic address recognition; NOXADDR_ATI1:Nitrogen oxygen before; NOXADDR_ATO1:After nitrogen oxygen
 
 #define VERSION	"GXAV05.06A"
-#define MANUFACTURERSNAME	"xxxxxxV05.06A"     //锟酵伙拷锟斤拷锟斤拷
+// #define MANUFACTURERSNAME	"xxxxxxV05.06A"     //锟酵伙拷锟斤拷锟斤拷
 
 #define VOLTAGE_COMPATIBILITY				//閿熸枻鎷峰帇閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓锟�
 #ifndef VOLTAGE_COMPATIBILITY

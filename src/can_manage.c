@@ -115,7 +115,7 @@ enum PrivateParamList{
   	Coeffi_NOx_A4,
   	Coeffi_NOx_B4,
 
-	//??????????��???
+	//??????????��???
   	Coeffi_NOx_a1,
   	Coeffi_NOx_b1,
   	Coeffi_NOx_c1,
@@ -187,7 +187,7 @@ uint32_t NOValueOffsetTimer = 0;	//?????????????????
 uint32_t O2CValueOffsetTimer = 0;
 //uint8_t Version[] = VERSION;
 uint8_t Version[] = VERSION;
-uint8_t Manufacturers[] = MANUFACTURERSNAME;
+uint8_t Manufacturers[] = VERSION;
 
 uint32_t DATA2_1STimer = 0;
 
@@ -198,9 +198,9 @@ uint32_t NOxHandleTimer = 0;
 
 void Cmd_StopHandle(void);
 void Can_Init(void);			//????CAN?????????
-void CAN_RxHandle(void);			//CAN?????��?
+void CAN_RxHandle(void);			//CAN?????��?
 void AtmosphereCalculate(void);		//???????
-void Status_Detect(void);			//???��?
+void Status_Detect(void);			//???��?
 void CAN_TxTask(void);				//CAN?????????????
 void CAN_TxDataTask(void);			//CAN???????
 void CAN_CMDTransmit(uint16_t cmdid,uint8_t* data,uint32_t Timeout_ms);			//CAN????????
@@ -347,9 +347,9 @@ void CAN_PC_Init(void)
 #ifdef DEBUG
 	printf("\r\nCAN bus initialization successful.\r\n");
 #endif
-	//delchar(Version,1,4);
-	//delchar(Version,3,1);
-	//delchar(Manufacturers,4,6);
+	delchar(Version,1,4);
+	delchar(Version,3,1);
+	delchar(Manufacturers,4,6);
 
 }
 void CAN_IfConnectUSBtoCAN(void){
@@ -556,64 +556,64 @@ void Status_Detect(void)
 	}
 }
 
-uint8_t* mystrcpy(uint8_t * dest, uint8_t deststart, uint8_t * src, uint8_t srcstart, uint8_t count){//��src�ַ�����srcstart��count���ֽڸ��Ƶ�dest�ַ���deststart��ʼ��
-	uint8_t* temp = dest;
-    while(srcstart--)
-        src++;
-    while(deststart--)
-        dest++;
-	while (count && (*dest++=*src++))
-		count--;
-	if(count)
-		while (--count)
-			*dest++='\0';
-	return(temp);
-}
+// uint8_t* mystrcpy(uint8_t * dest, uint8_t deststart, uint8_t * src, uint8_t srcstart, uint8_t count){//��src�ַ�����srcstart��count���ֽڸ��Ƶ�dest�ַ���deststart��ʼ��
+// 	uint8_t* temp = dest;
+//     while(srcstart--)
+//         src++;
+//     while(deststart--)
+//         dest++;
+// 	while (count && (*dest++=*src++))
+// 		count--;
+// 	if(count)
+// 		while (--count)
+// 			*dest++='\0';
+// 	return(temp);
+// }
 
-uint8_t CAN_ResolveStrPak(uint8_t (*dest)[5], uint8_t* str){//��str��Ϊ2��3��3��3��3...���ȵ����ַ��������Ҵ�����?
-	uint8_t i = 0;
-	uint8_t totallen = strlen((char*)str);
-	uint8_t unitcount = ((totallen-2)%3 == 0) ? (totallen-2)/3:(totallen-2)/3+1;
-    for(i = 0; i < unitcount + 1; i++){
-        dest[i][0] = i+1;
-    }
-    dest[0][1] = totallen;
-    mystrcpy(dest[0],2,str,0,2);
-    for(i = 0; i < unitcount; i++){
-        mystrcpy(dest[i+1], 1, str, 2+i*3, 3);
-    }
-	return (unitcount+1);
-}
+// uint8_t CAN_ResolveStrPak(uint8_t (*dest)[5], uint8_t* str){//��str��Ϊ2��3��3��3��3...���ȵ����ַ��������Ҵ�����?
+// 	uint8_t i = 0;
+// 	uint8_t totallen = strlen((char*)str);
+// 	uint8_t unitcount = ((totallen-2)%3 == 0) ? (totallen-2)/3:(totallen-2)/3+1;
+//     for(i = 0; i < unitcount + 1; i++){
+//         dest[i][0] = i+1;
+//     }
+//     dest[0][1] = totallen;
+//     mystrcpy(dest[0],2,str,0,2);
+//     for(i = 0; i < unitcount; i++){
+//         mystrcpy(dest[i+1], 1, str, 2+i*3, 3);
+//     }
+// 	return (unitcount+1);
+// }
 
-void CAN_SendVersionStr(void){
-	uint8_t i = 0;
-	CANPaivateFrameType TxFrame;
-	uint8_t Versionout[15][5] = {{0}};
-	uint8_t count = 0;
-    count = CAN_ResolveStrPak(Versionout,Version);
-	for(i = 0; i < count; i++){
-		TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
-		TxFrame.Paivate_Cmd.param = Param_Version;
-		TxFrame.Paivate_Cmd.type = Type_Uint8;
-		memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Versionout[i],4);
-		CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
-	}
-}
+// void CAN_SendVersionStr(void){
+// 	uint8_t i = 0;
+// 	CANPaivateFrameType TxFrame;
+// 	uint8_t Versionout[15][5] = {{0}};
+// 	uint8_t count = 0;
+//     count = CAN_ResolveStrPak(Versionout,Version);
+// 	for(i = 0; i < count; i++){
+// 		TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
+// 		TxFrame.Paivate_Cmd.param = Param_Version;
+// 		TxFrame.Paivate_Cmd.type = Type_Uint8;
+// 		memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Versionout[i],4);
+// 		CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
+// 	}
+// }
 
-void CAN_SendManufacturersStr(void){
-	uint8_t i = 0;
-	CANPaivateFrameType TxFrame;
-	uint8_t Manufacturersout[15][5] = {{0}};
-	uint8_t count = 0;
-    count = CAN_ResolveStrPak(Manufacturersout,Manufacturers);
-	for(i = 0; i < count; i++){
-		TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
-		TxFrame.Paivate_Cmd.param = Param_Manufacturers;
-		TxFrame.Paivate_Cmd.type = Type_Uint8;
-		memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Manufacturersout[i],4);
-		CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
-	}
-}
+// void CAN_SendManufacturersStr(void){
+// 	uint8_t i = 0;
+// 	CANPaivateFrameType TxFrame;
+// 	uint8_t Manufacturersout[15][5] = {{0}};
+// 	uint8_t count = 0;
+//     count = CAN_ResolveStrPak(Manufacturersout,Manufacturers);
+// 	for(i = 0; i < count; i++){
+// 		TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
+// 		TxFrame.Paivate_Cmd.param = Param_Manufacturers;
+// 		TxFrame.Paivate_Cmd.type = Type_Uint8;
+// 		memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Manufacturersout[i],4);
+// 		CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
+// 	}
+// }
 
 
 
@@ -660,24 +660,20 @@ void CAN_RxHandle(void)
 			case Cmd_Request:
 				switch(RxFrame.Paivate_Cmd.param){
 				case Param_Version:
-					/*
 					TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
 					TxFrame.Paivate_Cmd.param = Param_Version;
 					TxFrame.Paivate_Cmd.type = Type_Uint8;
 					memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Version,4);
 					CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
-					*/
-					CAN_SendVersionStr();
+					// CAN_SendVersionStr();
 					break;
 				case Param_Manufacturers:
-					/*
 					TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
 					TxFrame.Paivate_Cmd.param = Param_Manufacturers;
 					TxFrame.Paivate_Cmd.type = Type_Uint8;
 					memcpy(TxFrame.Paivate_Cmd.datas.Uint8,Manufacturers,4);
 					CAN_CMDTransmit(PrivateCmd_Intake,TxFrame.RxData,500);
-					*/
-					CAN_SendManufacturersStr();
+					// CAN_SendManufacturersStr();
 					break;
 				case Param_Volage:
 					TxFrame.Paivate_Cmd.cmd = Cmd_Reply;
