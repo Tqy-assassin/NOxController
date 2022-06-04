@@ -60,8 +60,8 @@ To use "new" operator with EWL in C++ project the following symbol shall be defi
 _estack = 0x20003000;    /* end of SRAM */
 __SP_INIT = _estack;
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x00001400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x00000800;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x00000500;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x00000400;
 
 /* Specify the memory areas */
 MEMORY
