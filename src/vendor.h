@@ -33,6 +33,8 @@
 #include "vendor_NTK.h"
 #elif VENDOR_ID == BENZ_KIND
 #include "vendor_BENZ.h"
+#elif VENDOR_ID == DM19_KIND
+#include "vendor_DM19.h"
 #else
 #error "Device types do not matched"
 #endif

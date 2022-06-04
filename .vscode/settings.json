@@ -9,6 +9,8 @@
         "cstddef": "c",
         "type_traits": "c",
         "common.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "vendor_dm19.h": "c",
+        "can_api.h": "c"
     }
 }

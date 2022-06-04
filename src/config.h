@@ -25,13 +25,14 @@
 #endif
 
 #define ONSEMI_SCHEME 0    //閿熸枻鎷種TK: 0 | 鍘熼敓鏂ゆ嫹 :1
-#define NTK_KIND	1//250
-#define BENZ_KIND	2//500
-#define GWM_KIND	3//500
-#define YUC_Y24		4//500
+#define NTK_KIND        1      //CAN 250kbps
+#define BENZ_KIND       2      //CAN 500kbps
+#define GWM_KIND        3      //CAN 500kbps
+#define YUC_Y24         4      //CAN 500kbps
+#define DM19_KIND       5      //CAN 250kbps
 #define DEFAULT		NTK_KIND
 
-#define VENDOR_ID	NTK_KIND
+#define VENDOR_ID	DM19_KIND
 //#define DBFLAG 1
 //#define Default_SourceAddr		//J1939_Addr: SourceAddrATI1 | SourceAddrATO1 | SourceAddrATI2 | SourceAddrATO2
 
