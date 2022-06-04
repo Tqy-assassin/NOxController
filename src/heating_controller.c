@@ -175,7 +175,7 @@ void heating_control(void){
 
 				}
 
-				if(ADtf_Value->VTempValue > 0.7*PCLT->temper){//到设定温度的70%后开始PID计算
+				if(ADtf_Value->VTempValue > 0.4*PCLT->temper){//到设定温度的40%后开始PID计算
 					perheatcount = 0;
 					PWM_Duty_Cycle = Pre_PWM_Duty[4];
 					set_working_stage(STAGE_HEATING);
@@ -250,13 +250,13 @@ void Temperature_Controller(void)		//温度控制
 		HeatingStart = 0;
 		if(ADtf_Value->VTempValue > 0.99 * PCLT->temper){
 			Temper.Kp = TemperKp[0];
-			HeatingTimer = 500;
+			HeatingTimer = 900;
 		}else if(ADtf_Value->VTempValue > 0.85 * PCLT->temper){
 			Temper.Kp = TemperKp[0];
-			HeatingTimer = 300;
-		}else if(ADtf_Value->VTempValue > 0.7 * PCLT->temper){
+			HeatingTimer = 450;
+		}else if(ADtf_Value->VTempValue > 0.5 * PCLT->temper){
 			Temper.Kp = TemperKp[1];
-			HeatingTimer = 100;
+			HeatingTimer = 225;
 		}else{
 			Temper.Kp = TemperKp[1];
 			HeatingTimer = 0;

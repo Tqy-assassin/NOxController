@@ -304,7 +304,7 @@ float get_O2C(void){
 }
 
 float get_NOxC(void){
-	return NOxOUT;
+	return NOxOUT * 0.88;//CAN OUT*0.88,USB OUT *1
 }
 
 void CAN_PC_Init(void)
@@ -469,7 +469,7 @@ void AtmosphereCalculate(void){
 #endif
 	Ip2Avg = (float)((int32_t)(Ip2Avg*1000))/1000;
 	O2C = (Ip0Avg)*PCoe->O2_k + PCoe->O2_d;
-	if(O2C < 2){//O2<2%
+	if(O2C < 0.5){//O2<0.5%
 		Status_NOxnValid();
 	}
 	if(PCoe->Save_flag == QuadraticEquation){

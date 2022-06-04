@@ -108,7 +108,7 @@ SurveyVariate_Type Vref1 = {0};				//Ip1 -> Vref1
 SurveyVariate_Type Vref2 = {0};				//Ip2 -> Vref2
 
 uint8_t ASIC_Flag = 1;
-uint8_t HEXorDEC = 0;			//0锟斤拷10锟斤拷锟狡ｏ拷1锟斤拷16锟斤拷锟斤拷
+uint8_t HEXorDEC = 0;			//0閿熸枻鎷�10閿熸枻鎷烽敓鐙★綇鎷�1閿熸枻鎷�16閿熸枻鎷烽敓鏂ゆ嫹
 
 uint8_t DBFS = 2;
 
@@ -118,33 +118,33 @@ uint8_t NoPIDflag = 0;
 uint32_t DBFSTimemr = 0;
 const float Vrefbound[4] = {0.01, 0.05, 0.15, 0.3};//V
 float Kp[7][5] =	   {
-							{1000,5000,5000,5000,5000},				//0: I0--->V0(1)//4500
-							{100, 1000, 1000, 1000, 1000},			//1: I1--->V1
-							{10,   100,   100,   100,   100},			//2: I2--->V2(1)
-							{0.0005,0.0005,0.0005,0.0005,0.0005},	//3: I1--->V0
-							{0.005,0.005,0.005,0.005,0.005},		//4: I1+锟斤拷锟�--->V0
-							{1000,5000,5000,5000,5000},			//5: I0--->V0(2)//7776
-							{10,   100,   100,   100,   100}			//6: I2--->V2(2)
+							{5000,5000,5000,5000,5000},			//0: I0--->V0(1)//4500
+							{500,500,500,500,500},				//1: I1--->V1
+							{50,50,50,50,50},					//2: I2--->V2(1)
+							{0.05,0.05,0.05,0.05,0.05},			//3: I1--->V0
+							{0.005,0.005,0.005,0.005,0.005},	//4: I1+閿熸枻鎷烽敓锟�--->V0
+							{5000,5000,5000,5000,5000},			//5: I0--->V0(2)//7776
+							{50,50,50,50,50}					//6: I2--->V2(2)
 																		};
 
 float Ki[7][5] = 	   {
-							{10, 50, 50, 50, 50},				//0: I0--->V0(1)
-							{5,  90,  90,  90,  90},				//1: I1--->V1
-							{1,  10,  10,  10,  10},						//2: I2--->V2(1)
-							{0.00001,0.00001,0.00001,0.00001,0.00001},	//3: I1--->V0
-							{0.0002,0.0002,0.0002,0.0002,0.0002},		//4: I1+锟斤拷锟�--->V0
-							{10, 50, 50, 50, 50},				//5: I0--->V0(2)
-							{1,  10,  10,  10,  10}							//6: I2--->V2(2)
+							{500,500,500,500,500},				//0: I0--->V0(1)
+							{50,50,50,50,50},					//1: I1--->V1
+							{5,5,5,5,5},						//2: I2--->V2(1)
+							{0.000001,0.000001,0.000001,0.000001,0.000001},	//3: I1--->V0
+							{0.0002,0.0002,0.0002,0.0002,0.0002},//4: I1+閿熸枻鎷烽敓锟�--->V0
+							{500,500,500,500,500},				//5: I0--->V0(2)
+							{5,5,5,5,5}							//6: I2--->V2(2)
 																		};
 
 float Kd[7][5] = 	   {
-							{0,0,0,0,0},							//0: I0--->V0(1)
-							{0,0,0,0,0},							//1: I1--->V1
-							{0,0,0,0,0},							//2: I2--->V2(1)
-							{0.0001,0.0001,0.0001,0.0001,0.0001},	//3: I1--->V0
-							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+锟斤拷锟�--->V0
-							{0,0,0,0,0},							//5: I0--->V0(2)
-							{0,0,0,0,0}								//2: I2--->V2(2)
+							{100,100,100,100,100},				//0: I0--->V0(1)
+							{10,10,10,10,10},					//1: I1--->V1
+							{1,1,1,1,1},						//2: I2--->V2(1)
+							{0.01,0.01,0.01,0.01,0.01},			//3: I1--->V0
+							{0,0,0,0,0},						//4: I1+閿熸枻鎷烽敓锟�--->V0
+							{100,100,100,100,100},				//5: I0--->V0(2)
+							{1,1,1,1,1}							//2: I2--->V2(2)
 																	};
 /*
 float Kd[6][5] = 	   {
@@ -152,7 +152,7 @@ float Kd[6][5] = 	   {
 							{100, 100, 100, 100, 100},				//1: I1--->V1
 							{1,  1,  1,  1,  1},					//2: I2--->V2
 							{0.0001,0.0001,0.0001,0.0001,0.0001},	//3: I1--->V0
-							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+锟斤拷锟�--->V0
+							{0.0001,0.0001,0.0001,0.0001,0.0001},	//4: I1+閿熸枻鎷烽敓锟�--->V0
 							{2000,2000,2000,2000,2000}				//5: I0--->V0(2)
 																	};
 */
@@ -179,8 +179,8 @@ IpValue Ip_Value =
 		.Ip2_Value = 0
 	};
 
-float Vref0_V = 0.35;					//Vref0目锟斤拷值
-float Vref1_V = 0.405;					//Vref1目锟斤拷值
+float Vref0_V = 0.35;					//Vref0鐩敓鏂ゆ嫹鍊�
+float Vref1_V = 0.405;					//Vref1鐩敓鏂ゆ嫹鍊�
 int16_t adc_value[6];
 
 ADtfValue ADtf_Value = {0,0,0,0,0,0};
@@ -206,7 +206,7 @@ void init_Ip_Value(void){
 }
 
 
-void ASIC_DACAndInspectHandler(void){					//FTM2锟斤拷锟斤拷卸锟�		锟斤拷锟斤拷IP0 IP1 IP2锟斤拷值锟斤拷锟斤拷
+void ASIC_DACAndInspectHandler(void){					//FTM2閿熸枻鎷烽敓鏂ゆ嫹鍗搁敓锟�		閿熸枻鎷烽敓鏂ゆ嫹IP0 IP1 IP2閿熸枻鎷峰�奸敓鏂ゆ嫹閿熸枻鎷�
 	extern uint8_t Sensor_Status;
 //	__IO ASIC_StatusTypeDef Status;
 	uint32_t ip0;
@@ -410,7 +410,7 @@ void ASIC_DACAndInspectHandler(void){					//FTM2锟斤拷锟斤拷卸锟�		锟
 
 
 
-void ASIC_ReadMeasurementResultHandler(void){					//锟斤拷锟酵帮拷森锟斤拷锟斤拷锟捷采硷拷锟斤拷锟斤拷
+void ASIC_ReadMeasurementResultHandler(void){					//閿熸枻鎷烽敓閰靛府鎷锋．閿熸枻鎷烽敓鏂ゆ嫹閿熸嵎閲囩》鎷烽敓鏂ゆ嫹閿熸枻鎷�
 	static uint8_t count = 0;//,heatinit = 1;
 //	ASIC_ReadMeasurementResultFlag = 0;
 	switch(get_working_stage()){
@@ -646,7 +646,7 @@ void MCLK_init(void)
 
 	FTM0CH1_Config.ctrl.bits.bMode=FTM_PWMMODE_EDGEALLIGNED;
 	FTM0CH1_Config.ctrl.bits.bPWMPol=FTM_PWM_HIGHTRUEPULSE;
-	FTM0CH1_Config.u16CnV=12;//占锟秸憋拷0.5
+	FTM0CH1_Config.u16CnV=12;//鍗犻敓绉告唻鎷�0.5
 
 //	FTM_SetCallback(FTM0, FTM_Task);
 	FTM_ChannelInit(FTM0,1,FTM0CH1_Config);
@@ -733,7 +733,7 @@ void spi_start(void)
 }
 
 
-void Value_Dispose(void)		//锟斤拷锟捷斤拷锟斤拷锟斤拷锟斤拷锟斤拷AD锟斤拷取值
+void Value_Dispose(void)		//閿熸枻鎷烽敓鎹锋枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷稟D閿熸枻鎷峰彇鍊�
 {
 	ADtf_Value.Vref0Value = (float)adc_value[0]*IP0_ADC_COEF/8192;
 	ADtf_Value.Vref1Value = (float)adc_value[1]*IP1_ADC_COEF/8192;
@@ -874,14 +874,14 @@ void Survey_Controller(void){
 		IP1.E_1 = IP1.E;
 		IP1.E = CLT_pointer()->Ip1 - Ip_Value.Ip1_Value;
 		IP1.dE = IP1.E - IP1.E_1;
-		fuzzy_Controller(&IP1);			//模锟斤拷锟斤拷锟斤拷应锟斤拷锟斤拷锟斤拷锟皆讹拷锟斤拷锟斤拷IP1.Ki锟斤拷值
+		fuzzy_Controller(&IP1);			//妯￠敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹搴旈敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熺殕璁规嫹閿熸枻鎷烽敓鏂ゆ嫹IP1.Ki閿熸枻鎷峰��
 
 	//	if(myabs(IP1.E) > 0.1){
 		float Vref0_inc;
 		Vref0_inc = (IP1.Kp+IP1.Ki+IP1.Kd)*IP1.E - (IP1.Kp+2*IP1.Kd)*IP1.E_1 + IP1.Kd*IP1.E_2;
-		if(myabs(Vref0.E) > 0.1){			//Vref0未锟斤拷锟斤拷目锟斤拷值时  锟脚伙拷锟斤拷Vref0目锟斤拷值锟侥变化
+		if(myabs(Vref0.E) > 0.1){			//Vref0鏈敓鏂ゆ嫹閿熸枻鎷风洰閿熸枻鎷峰�兼椂  閿熻剼浼欐嫹閿熸枻鎷稸ref0鐩敓鏂ゆ嫹鍊奸敓渚ュ彉鍖�
 			Vref0_inc /= 2.0;
-		}else if(myabs(IP1.dE) < 1){		//Ip1锟斤拷锟斤拷锟斤拷小时锟斤拷锟斤拷Ip1锟斤拷锟斤拷锟饺讹拷锟斤拷锟斤拷锟斤拷锟斤拷PID锟斤拷锟斤拷锟斤拷锟接匡拷Ip1锟秸伙拷锟斤拷7uA锟斤拷锟劫讹拷
+		}else if(myabs(IP1.dE) < 1){		//Ip1閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷峰皬鏃堕敓鏂ゆ嫹閿熸枻鎷稩p1閿熸枻鎷烽敓鏂ゆ嫹閿熼ズ璁规嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹PID閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鎺ュ尅鎷稩p1閿熺Ц浼欐嫹閿熸枻鎷�7uA閿熸枻鎷烽敓鍔鎷�
 			if(IP1.E*Vref0_inc > 0){
 				Vref0_inc *= 3;
 			}
@@ -967,7 +967,7 @@ void Survey_Controller(void){
 	Ip_Value.Ip2_Value = Ip_Value.Ip2_Value < Ip2_MaxValue ? (Ip_Value.Ip2_Value > Ip2_MinValue ? Ip_Value.Ip2_Value : Ip2_MinValue) : Ip2_MaxValue;
 
 //===================================================================================================================
-//	if(Vref0Value > 0.35){				//锟叫讹拷Vref0锟斤拷锟斤拷350mV锟斤拷锟斤拷锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟�350mV
+//	if(Vref0Value > 0.35){				//閿熷彨璁规嫹Vref0閿熸枻鎷烽敓鏂ゆ嫹350mV閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷锋椂閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿燂拷350mV
 //		count1++;
 //		if(count1>100 * 30){
 //			Vref0_V = 0.35;
@@ -984,7 +984,7 @@ void Survey_Controller(void){
 
 	push(&Ip0Totle,Ip_Value.Ip0_Value);
 
-	if(ADtf_Value.Vref2Value < 0.5 && ADtf_Value.Vref2Value > 0.35){
+	if(ADtf_Value.Vref2Value < 0.46 && ADtf_Value.Vref2Value > 0.44){
 		if(Vref2_Stable < 10){
 			Vref2_Stable++;
 		}
@@ -1010,11 +1010,11 @@ void Survey_Controller(void){
 }
 
 void sensor_init(void){
-	MCLK_init();//锟斤拷始锟斤拷MCLK
+	MCLK_init();//閿熸枻鎷峰閿熸枻鎷稭CLK
 	ASIC_SPI_Init(SPI0);
-	spi_start();//锟斤拷锟斤拷ONSEME芯片
+	spi_start();//閿熸枻鎷烽敓鏂ゆ嫹ONSEME鑺墖
 	FTM_SetCallback(FTM2, FTM2_Task);
-	PID_init();//PID锟斤拷锟斤拷锟斤拷始锟斤拷
+	PID_init();//PID閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷峰閿熸枻鎷�
 }
 
 

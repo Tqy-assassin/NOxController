@@ -8,6 +8,7 @@
         "string.h": "c",
         "cstddef": "c",
         "type_traits": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "stdlib.h": "c"
     }
 }
